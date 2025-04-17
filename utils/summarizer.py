@@ -1,23 +1,15 @@
-import os
-import google.generativeai as genai
+from transformers import pipeline
 
-api_key = os.getenv("GEMINI_API_KEY")
+# Cargar el pipeline una sola vez al iniciar la app
+summarizer = pipeline("summarization", model="t5-small", tokenizer="t5-small")
 
-if not api_key:
-    def resumir_texto(texto):
-        return "🔒 Gemini API Key no configurada."
-else:
-    genai.configure(api_key=api_key)
+def resumir_texto(texto):
+    if not texto.strip():
+        return "Resumen no disponible."
 
-    def resumir_texto(texto):
-        if not texto.strip():
-            return "Resumen no disponible."
-
-        try:
-            model = genai.GenerativeModel("models/chat-bison-001")
-            chat = model.start_chat()
-            prompt = f"Resume en 3 a 5 líneas, con lenguaje técnico claro, el siguiente abstract académico:\n\n{texto.strip()}"
-            response = chat.send_message(prompt)
-            return response.text.strip()
-        except Exception as e:
-            return f"⚠️ Error al generar resumen con Gemini (chat-bison): {str(e)}"
+    try:
+        entrada = "summarize: " + texto.strip()
+        resultado = summarizer(entrada, max_length=100, min_length=30, do_sample=False)
+        return resultado[0]['summary_text']
+    except Exception as e:
+        return f"⚠️ Error al generar resumen: {str(e)}"
