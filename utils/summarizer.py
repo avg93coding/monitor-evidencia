@@ -14,15 +14,10 @@ else:
             return "Resumen no disponible."
 
         try:
-            model = genai.GenerativeModel(model_name="models/chat-bison-001")
-            response = model.generate_message(
-                contents=[
-                    {
-                        "role": "user",
-                        "parts": [f"Resume en 3 a 5 líneas el siguiente abstract académico:\n\n{texto.strip()}"]
-                    }
-                ]
-            )
+            model = genai.GenerativeModel("models/chat-bison-001")
+            chat = model.start_chat()
+            prompt = f"Resume en 3 a 5 líneas, con lenguaje técnico claro, el siguiente abstract académico:\n\n{texto.strip()}"
+            response = chat.send_message(prompt)
             return response.text.strip()
         except Exception as e:
             return f"⚠️ Error al generar resumen con Gemini (chat-bison): {str(e)}"
