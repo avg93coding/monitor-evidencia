@@ -6,8 +6,7 @@ from utils.pubmed_api import buscar_pubmed
 from utils.summarizer import resumir_texto
 from sources.clinical_trials import buscar_trials
 
-
-# Cargar variables de entorno (si se usan para otros fines)
+# Cargar variables de entorno
 load_dotenv()
 
 # Configuración general de la página
@@ -84,16 +83,17 @@ elif menu == "Clinical Trials":
             st.success(f"🧪 {len(ensayos)} estudios encontrados para '{query_trials}'")
 
             for e in ensayos:
-                with st.expander(e["Título"]):
-                    st.markdown(f"**NCT ID:** [{e['NCT ID']}]({e['Enlace']})")
-                    st.markdown(f"**Condición:** {e['Condición']}")
-                    st.markdown(f"**Estado:** {e['Estado']}")
-                    st.markdown(f"**Fase:** {e['Fase']}")
-                    st.markdown(f"**País:** {e['País']}")
-                    st.markdown(f"**Fecha de inicio:** {e['Fecha de inicio']}")
+                with st.expander(e.get("Título", "Sin título disponible")):
+                    nct_id = e.get("NCT ID", "")
+                    enlace = e.get("Enlace", f"https://clinicaltrials.gov/ct2/show/{nct_id}") if nct_id else "#"
+                    st.markdown(f"**NCT ID:** [{nct_id}]({enlace})")
+                    st.markdown(f"**Condición:** {e.get('Condición', '-')}")
+                    st.markdown(f"**Estado:** {e.get('Estado', '-')}")
+                    st.markdown(f"**Fase:** {e.get('Fase', '-')}")
+                    st.markdown(f"**País:** {e.get('País', '-')}")
+                    st.markdown(f"**Fecha de inicio:** {e.get('Fecha de inicio', '-')}")
         else:
             st.warning("No se encontraron resultados.")
-
 
 elif menu == "Configuración":
     st.title("⚙️ Configuración")
