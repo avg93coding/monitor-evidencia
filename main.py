@@ -5,6 +5,13 @@ from utils.pubmed_api import buscar_pubmed
 from utils.summarizer import resumir_texto
 from dotenv import load_dotenv
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# Then try importing
+from utils.pubmed_api import buscar_pubmed
+
 # Load environment variables
 load_dotenv()
 
