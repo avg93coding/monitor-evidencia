@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from utils.pubmed_api import buscar_pubmed
 from utils.summarizer import resumir_texto
 
-# Cargar variables de entorno
+# Cargar variables de entorno (si se usan para otros fines)
 load_dotenv()
 
 # Configuración general de la página
@@ -59,7 +59,7 @@ elif menu == "Búsqueda":
                     st.markdown(f"**Fuente:** {r['Fuente']}")
                     st.markdown(f"**Resumen original:**\n\n{r['Resumen']}")
 
-                    st.markdown("**🧠 Resumen generado por IA (Gemini):**")
+                    st.markdown("**🧠 Resumen generado por IA (Hugging Face T5):**")
                     with st.spinner("Generando resumen con IA..."):
                         resumen_ia = resumir_texto(r["Resumen"])
                         st.info(resumen_ia)
