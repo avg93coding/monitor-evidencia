@@ -9,18 +9,20 @@ if not api_key:
 else:
     genai.configure(api_key=api_key)
 
-    try:
-        model = genai.GenerativeModel("gemini-pro")
-    except Exception as e:
-        def resumir_texto(texto):
-            return f"❌ Error cargando modelo Gemini: {str(e)}"
-    else:
-        def resumir_texto(texto):
-            if not texto.strip():
-                return "Resumen no disponible."
-            try:
-                prompt = f"Resume en 3 a 5 líneas, en lenguaje técnico claro, el siguiente abstract académico:\n\n{texto.strip()}"
-                response = model.generate_content(prompt)
-                return response.text.strip()
-            except Exception as e:
-                return f"⚠️ Error al generar resumen con Gemini: {str(e)}"
+    def resumir_texto(texto):
+        if not texto.strip():
+            return "Resumen no disponible."
+
+        try:
+            model = genai.GenerativeModel(model_name="models/chat-bison-001")
+            response = model.generate_message(
+                contents=[
+                    {
+                        "role": "user",
+                        "parts": [f"Resume en 3 a 5 líneas el siguiente abstract académico:\n\n{texto.strip()}"]
+                    }
+                ]
+            )
+            return response.text.strip()
+        except Exception as e:
+            return f"⚠️ Error al generar resumen con Gemini (chat-bison): {str(e)}"
