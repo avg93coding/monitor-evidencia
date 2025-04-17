@@ -70,7 +70,7 @@ elif menu == "Búsqueda":
             st.warning("No se encontraron resultados.")
 
 elif menu == "Clinical Trials":
-    st.title("🧪 Ensayos Clínicos - ClinicalTrials.gov (Scraping Web)")
+    st.title("🧪 Ensayos Clínicos - ClinicalTrials.gov (API directa)")
 
     with st.form("form_trials"):
         query_trials = st.text_input("🔎 Término de búsqueda", value="semaglutide")
@@ -78,22 +78,21 @@ elif menu == "Clinical Trials":
         submitted_trials = st.form_submit_button("Buscar ensayos")
 
     if submitted_trials and query_trials:
-        with st.spinner("Realizando scraping de ClinicalTrials.gov..."):
-            ensayos = buscar_trials_scraping(query_trials, max_trials)
+        with st.spinner("Consultando ClinicalTrials.gov vía API..."):
+            ensayos = buscar_trials_api(query_trials, max_trials)
 
         if ensayos:
             st.success(f"🧪 {len(ensayos)} estudios encontrados para '{query_trials}'")
 
             for e in ensayos:
                 with st.expander(e.get("Título", "Sin título disponible")):
-                    nct_id = e.get("NCT ID", "-")
-                    enlace = e.get("Enlace", "#")
-                    estado = e.get("Estado", "-")
-
-                    st.markdown(f"**NCT ID:** [{nct_id}]({enlace})")
-                    st.markdown(f"**Estado:** {estado}")
+                    st.markdown(f"**NCT ID:** [{e.get('NCT ID', '-')}]({e.get('Enlace', '#')})")
+                    st.markdown(f"**Estado:** {e.get('Estado', '-')}")
+                    st.markdown(f"**Fase:** {e.get('Fase', '-')}")
+                    st.markdown(f"**Patrocinador:** {e.get('Patrocinador', '-')}")
         else:
-            st.warning("No se encontraron resultados.")
+            st.warning("No se encontraron estudios clínicos.")
+
 
 
 elif menu == "Configuración":
