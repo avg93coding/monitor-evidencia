@@ -4,6 +4,8 @@ import os
 from dotenv import load_dotenv
 from utils.pubmed_api import buscar_pubmed
 from utils.summarizer import resumir_texto
+from sources.clinical_trials import buscar_trials
+
 
 # Cargar variables de entorno (si se usan para otros fines)
 load_dotenv()
