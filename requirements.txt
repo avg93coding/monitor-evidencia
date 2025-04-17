@@ -1,4 +1,7 @@
 streamlit
+transformers
+torch
+sentencepiece
 biopython
 openai
 python-dotenv
