@@ -8,13 +8,13 @@ if not api_key:
         return "🔒 Gemini API Key no configurada."
 else:
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-pro')
 
     def resumir_texto(texto):
         if not texto.strip():
             return "Resumen no disponible."
         try:
-            prompt = f"Resume en 3 a 5 líneas el siguiente abstract científico:\n\n{texto.strip()}"
+            model = genai.GenerativeModel(model_name="models/text-bison-001")  # <- compatible y estable
+            prompt = f"Resume el siguiente texto científico en 3 a 5 líneas:\n\n{texto.strip()}"
             response = model.generate_content(prompt)
             return response.text.strip()
         except Exception as e:
