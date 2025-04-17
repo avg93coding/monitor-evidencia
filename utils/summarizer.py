@@ -1,34 +1,16 @@
-# utils/summarizer.py
-import os
-from openai import OpenAI
-from utils.secure_config import get_openai_api_key
+from transformers import pipeline
 
-def resumir_texto(texto, max_tokens=150):
-    """
-    Función para resumir texto usando OpenAI API con manejo seguro de API key.
-    """
-    # Get API key securely
-    api_key = get_openai_api_key()
-    
-    if not api_key:
-        return "⚠️ API key no configurada. Por favor ingresa tu API key en la sección de Configuración."
+# Cargar el modelo solo una vez
+resumidor = pipeline("summarization", model="t5-small", tokenizer="t5-small")
+
+def resumir_texto(texto):
+    if not texto or texto.strip() == "":
+        return "Resumen no disponible."
+
+    prompt = "summarize: " + texto.strip()
     
     try:
-        # Inicializar el cliente de OpenAI con la clave API
-        client = OpenAI(api_key=api_key)
-        
-        # Llamar a la API
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "Eres un asistente científico que resume artículos médicos de forma concisa y precisa."},
-                {"role": "user", "content": f"Resume el siguiente texto científico en español en aproximadamente 3-4 oraciones clave:\n\n{texto}"}
-            ],
-            max_tokens=max_tokens
-        )
-        
-        # Extraer el contenido de la respuesta
-        return response.choices[0].message.content
-            
+        resumen = resumidor(prompt, max_length=100, min_length=30, do_sample=False)
+        return resumen[0]['summary_text']
     except Exception as e:
-        return f"Error al resumir texto: {str(e)}"
+        return f"⚠️ Error al resumir texto: {str(e)}"
