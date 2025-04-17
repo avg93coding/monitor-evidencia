@@ -4,7 +4,8 @@ import os
 from dotenv import load_dotenv
 from utils.pubmed_api import buscar_pubmed
 from utils.summarizer import resumir_texto
-from sources.clinical_trials import buscar_trials
+from sources.clinical_trials_scraper import buscar_trials_scraping
+
 
 # Cargar variables de entorno
 load_dotenv()
@@ -68,7 +69,7 @@ elif menu == "Búsqueda":
             st.warning("No se encontraron resultados.")
 
 elif menu == "Clinical Trials":
-    st.title("🧪 Ensayos Clínicos - ClinicalTrials.gov")
+    st.title("🧪 Ensayos Clínicos - ClinicalTrials.gov (Scraping Web)")
 
     with st.form("form_trials"):
         query_trials = st.text_input("🔎 Término de búsqueda", value="semaglutide")
@@ -76,24 +77,23 @@ elif menu == "Clinical Trials":
         submitted_trials = st.form_submit_button("Buscar ensayos")
 
     if submitted_trials and query_trials:
-        with st.spinner("Consultando ClinicalTrials.gov..."):
-            ensayos = buscar_trials(query_trials, max_trials)
+        with st.spinner("Realizando scraping de ClinicalTrials.gov..."):
+            ensayos = buscar_trials_scraping(query_trials, max_trials)
 
         if ensayos:
             st.success(f"🧪 {len(ensayos)} estudios encontrados para '{query_trials}'")
 
             for e in ensayos:
                 with st.expander(e.get("Título", "Sin título disponible")):
-                    nct_id = e.get("NCT ID", "")
-                    enlace = e.get("Enlace", f"https://clinicaltrials.gov/ct2/show/{nct_id}") if nct_id else "#"
+                    nct_id = e.get("NCT ID", "-")
+                    enlace = e.get("Enlace", "#")
+                    estado = e.get("Estado", "-")
+
                     st.markdown(f"**NCT ID:** [{nct_id}]({enlace})")
-                    st.markdown(f"**Condición:** {e.get('Condición', '-')}")
-                    st.markdown(f"**Estado:** {e.get('Estado', '-')}")
-                    st.markdown(f"**Fase:** {e.get('Fase', '-')}")
-                    st.markdown(f"**País:** {e.get('País', '-')}")
-                    st.markdown(f"**Fecha de inicio:** {e.get('Fecha de inicio', '-')}")
+                    st.markdown(f"**Estado:** {estado}")
         else:
             st.warning("No se encontraron resultados.")
+
 
 elif menu == "Configuración":
     st.title("⚙️ Configuración")
