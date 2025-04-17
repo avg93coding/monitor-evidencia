@@ -3,8 +3,9 @@ from PIL import Image
 import os
 from dotenv import load_dotenv
 from utils.pubmed_api import buscar_pubmed
-from utils.summarizer import resumir_texto
 from sources.europe_pmc import buscar_europe_pmc
+from utils.summarizer import resumir_texto
+
 
 
 
@@ -41,57 +42,49 @@ if menu == "Dashboard":
     st.info("Desde aquí podrás ver métricas clave, alertas y tendencias globales de publicaciones.")
 
 elif menu == "Búsqueda":
-    st.title("🔍 Buscar Evidencia en PubMed")
+    st.title("🔍 Búsqueda unificada: PubMed + Europe PMC")
 
     with st.form("form_busqueda"):
         query = st.text_input("🔎 Término de búsqueda", value="semaglutide")
-        max_resultados = st.slider("Resultados a mostrar", 5, 50, 10)
+        max_resultados = st.slider("Resultados a mostrar por fuente", 5, 50, 10)
         submitted = st.form_submit_button("Buscar")
 
     if submitted and query:
+        ### 1. PubMed ###
+        st.subheader("📖 Resultados en PubMed")
         with st.spinner("Consultando PubMed..."):
-            resultados = buscar_pubmed(query, max_resultados)
+            resultados_pubmed = buscar_pubmed(query, max_resultados)
 
-        if resultados:
-            st.success(f"🔍 {len(resultados)} resultados encontrados para '{query}'")
-
-            for r in resultados:
+        if resultados_pubmed:
+            for r in resultados_pubmed:
                 with st.expander(r["Título"]):
                     st.markdown(f"**PMID:** {r['PMID']}")
                     st.markdown(f"**Autores:** {r['Autores']}")
                     st.markdown(f"**Fuente:** {r['Fuente']}")
                     st.markdown(f"**Resumen original:**\n\n{r['Resumen']}")
-
-                    st.markdown("**🧠 Resumen generado por IA (Hugging Face T5):**")
-                    with st.spinner("Generando resumen con IA..."):
+                    st.markdown("**🧠 Resumen generado por IA:**")
+                    with st.spinner("Resumiendo..."):
                         resumen_ia = resumir_texto(r["Resumen"])
                         st.info(resumen_ia)
         else:
-            st.warning("No se encontraron resultados.")
+            st.warning("No se encontraron resultados en PubMed.")
 
-elif menu == "Clinical Trials":
-    st.title("🧪 Ensayos Clínicos - ClinicalTrials.gov (API directa)")
+        st.divider()
 
-    with st.form("form_trials"):
-        query_trials = st.text_input("🔎 Término de búsqueda", value="semaglutide")
-        max_trials = st.slider("Resultados a mostrar", 5, 50, 10)
-        submitted_trials = st.form_submit_button("Buscar ensayos")
+        ### 2. Europe PMC ###
+        st.subheader("🌍 Resultados en Europe PMC")
+        with st.spinner("Consultando Europe PMC..."):
+            resultados_epmc = buscar_europe_pmc(query, max_resultados)
 
-    if submitted_trials and query_trials:
-        with st.spinner("Consultando ClinicalTrials.gov vía API..."):
-            ensayos = buscar_trials_api(query_trials, max_trials)
-
-        if ensayos:
-            st.success(f"🧪 {len(ensayos)} estudios encontrados para '{query_trials}'")
-
-            for e in ensayos:
-                with st.expander(e.get("Título", "Sin título disponible")):
-                    st.markdown(f"**NCT ID:** [{e.get('NCT ID', '-')}]({e.get('Enlace', '#')})")
-                    st.markdown(f"**Estado:** {e.get('Estado', '-')}")
-                    st.markdown(f"**Fase:** {e.get('Fase', '-')}")
-                    st.markdown(f"**Patrocinador:** {e.get('Patrocinador', '-')}")
+        if resultados_epmc:
+            for e in resultados_epmc:
+                with st.expander(e["Título"]):
+                    st.markdown(f"**ID:** [{e['ID']}]({e['Enlace']})")
+                    st.markdown(f"**Fuente:** {e['Fuente']}")
+                    st.markdown(f"**Tipo de publicación:** {e['Tipo']}")
         else:
-            st.warning("No se encontraron estudios clínicos.")
+            st.warning("No se encontraron resultados en Europe PMC.")
+
 
 
 
