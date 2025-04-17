@@ -29,7 +29,7 @@ else:
     st.sidebar.markdown("### 🔬 Monitor de Evidencia")
 
 # Menú de navegación lateral
-menu = st.sidebar.radio("Menú principal", ["Dashboard", "Búsqueda", "Configuración"])
+menu = st.sidebar.radio("Menú principal", ["Dashboard", "Búsqueda", "Clinical Trials", "Configuración"])
 
 # Pantalla principal
 if menu == "Dashboard":
@@ -65,6 +65,33 @@ elif menu == "Búsqueda":
                         st.info(resumen_ia)
         else:
             st.warning("No se encontraron resultados.")
+
+elif menu == "Clinical Trials":
+    st.title("🧪 Ensayos Clínicos - ClinicalTrials.gov")
+
+    with st.form("form_trials"):
+        query_trials = st.text_input("🔎 Término de búsqueda", value="semaglutide")
+        max_trials = st.slider("Resultados a mostrar", 5, 50, 10)
+        submitted_trials = st.form_submit_button("Buscar ensayos")
+
+    if submitted_trials and query_trials:
+        with st.spinner("Consultando ClinicalTrials.gov..."):
+            ensayos = buscar_trials(query_trials, max_trials)
+
+        if ensayos:
+            st.success(f"🧪 {len(ensayos)} estudios encontrados para '{query_trials}'")
+
+            for e in ensayos:
+                with st.expander(e["Título"]):
+                    st.markdown(f"**NCT ID:** [{e['NCT ID']}]({e['Enlace']})")
+                    st.markdown(f"**Condición:** {e['Condición']}")
+                    st.markdown(f"**Estado:** {e['Estado']}")
+                    st.markdown(f"**Fase:** {e['Fase']}")
+                    st.markdown(f"**País:** {e['País']}")
+                    st.markdown(f"**Fecha de inicio:** {e['Fecha de inicio']}")
+        else:
+            st.warning("No se encontraron resultados.")
+
 
 elif menu == "Configuración":
     st.title("⚙️ Configuración")
