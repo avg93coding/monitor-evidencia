@@ -1,16 +1,21 @@
-from transformers import pipeline
+import os
+import google.generativeai as genai
 
-# Cargar el modelo solo una vez
-resumidor = pipeline("summarization", model="t5-small", tokenizer="t5-small")
+api_key = os.getenv("GEMINI_API_KEY")
 
-def resumir_texto(texto):
-    if not texto or texto.strip() == "":
-        return "Resumen no disponible."
+if not api_key:
+    def resumir_texto(texto):
+        return "🔒 Gemini API Key no configurada."
+else:
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('gemini-pro')
 
-    prompt = "summarize: " + texto.strip()
-    
-    try:
-        resumen = resumidor(prompt, max_length=100, min_length=30, do_sample=False)
-        return resumen[0]['summary_text']
-    except Exception as e:
-        return f"⚠️ Error al resumir texto: {str(e)}"
+    def resumir_texto(texto):
+        if not texto.strip():
+            return "Resumen no disponible."
+        try:
+            prompt = f"Resume en 3 a 5 líneas el siguiente abstract científico:\n\n{texto.strip()}"
+            response = model.generate_content(prompt)
+            return response.text.strip()
+        except Exception as e:
+            return f"⚠️ Error al generar resumen con Gemini: {str(e)}"
