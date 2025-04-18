@@ -450,7 +450,7 @@ with col4:
     """, unsafe_allow_html=True)
 
 # 3. CLINICAL TRIALS
-elif menu == "🧪 Clinical Trials":
+elif "🧪 Clinical Trials" in menu:
     st.title("🧪 Monitoreo de Ensayos Clínicos")
 
     # Introducción a la sección
