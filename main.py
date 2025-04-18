@@ -102,7 +102,7 @@ st.sidebar.markdown("---")
 menu = st.sidebar.radio("Navegación",
                         ["🏠 Dashboard",
                          "🔍 Búsqueda Científica",
-                         "🧪 Clinical Trials",
+                         "Clinical Trials",
                          "📊 Análisis",
                          "⚙️ Configuración"])
 
@@ -450,7 +450,7 @@ with col4:
     """, unsafe_allow_html=True)
 
 # 3. CLINICAL TRIALS
-elif "🧪 Clinical Trials" in menu:
+elif "Clinical Trials" in menu:
     st.title("🧪 Monitoreo de Ensayos Clínicos")
 
     # Introducción a la sección
