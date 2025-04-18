@@ -1071,3 +1071,607 @@ elif "📊 Análisis" in menu:
                 'Tema': temas_interes,
                 'Publicaciones': [
                     sum(trend_data[trend_data['Tema']
+                'Tema': temas_interes,
+                'Publicaciones': [
+                    sum(trend_data[trend_data['Tema'] == tema]['Publicaciones']) 
+                    for tema in temas_interes
+                ],
+                'Citas promedio': [
+                    round(random.uniform(15, 35), 1) for _ in temas_interes
+                ],
+                'Factor impacto': [
+                    round(random.uniform(3.5, 8.2), 2) for _ in temas_interes
+                ],
+                'Crecimiento anual (%)': [
+                    round(random.uniform(8, 25), 1) for _ in temas_interes
+                ]
+            })
+            
+            st.dataframe(impact_data, use_container_width=True)
+            
+            # Gráfico de burbujas para visualizar impacto
+            st.subheader("Mapa de impacto científico")
+            
+            # Datos para gráfico de burbujas
+            bubble_data = pd.DataFrame({
+                'Tema': temas_interes * 3,
+                'Año': [2015, 2015] + [2020, 2020] + [2025, 2025],
+                'Publicaciones': [
+                    int(random.uniform(100, 200)) for _ in range(len(temas_interes) * 3)
+                ],
+                'Citas': [
+                    int(random.uniform(500, 5000)) for _ in range(len(temas_interes) * 3)
+                ],
+                'Impacto': [
+                    round(random.uniform(2, 15), 1) for _ in range(len(temas_interes) * 3)
+                ]
+            })
+            
+            bubble_chart = alt.Chart(bubble_data).mark_circle().encode(
+                x=alt.X('Publicaciones:Q', title='Número de publicaciones'),
+                y=alt.Y('Citas:Q', title='Número de citas'),
+                size=alt.Size('Impacto:Q', scale=alt.Scale(range=[100, 1000]), legend=alt.Legend(title="Factor de impacto")),
+                color=alt.Color('Tema:N', legend=alt.Legend(title="Tema")),
+                tooltip=['Tema', 'Año', 'Publicaciones', 'Citas', 'Impacto']
+            ).properties(
+                height=500
+            ).interactive()
+            
+            st.altair_chart(bubble_chart, use_container_width=True)
+            
+            # Análisis de colaboraciones
+            st.subheader("Redes de colaboración global")
+            
+            # Simular datos de colaboración internacional
+            countries = ['Estados Unidos', 'China', 'Reino Unido', 'Alemania', 'Japón', 'Francia', 'Canadá', 'Australia']
+            connections = []
+            
+            for i in range(len(countries)):
+                for j in range(i+1, len(countries)):
+                    if random.random() > 0.3:  # 70% de probabilidad de conexión
+                        strength = random.randint(5, 30)
+                        connections.append({
+                            'source': countries[i],
+                            'target': countries[j],
+                            'strength': strength
+                        })
+            
+            # Visualizar la red de colaboración (placeholder - en producción usaría PyVis o NetworkX)
+            st.markdown("""
+            En una implementación completa, aquí se mostraría un gráfico interactivo de redes de colaboración
+            entre instituciones y países en el campo seleccionado.
+            """)
+            
+            # Tabla de colaboraciones
+            collab_data = pd.DataFrame(connections)
+            
+            st.dataframe(collab_data, use_container_width=True)
+            
+            # Análisis de tendencias emergentes
+            st.subheader("Temas emergentes identificados")
+            
+            emerging_topics = [
+                {"tema": "Receptores GLP-1 de administración oral", "crecimiento": "+127%", "año_emergencia": 2023},
+                {"tema": "Combinaciones GLP-1/GIP", "crecimiento": "+95%", "año_emergencia": 2022},
+                {"tema": "Terapias con células madre para diabetes", "crecimiento": "+62%", "año_emergencia": 2024},
+                {"tema": "Inteligencia artificial en endocrinología", "crecimiento": "+218%", "año_emergencia": 2021}
+            ]
+            
+            for i, topic in enumerate(emerging_topics):
+                st.markdown(f"""
+                <div style="background-color:#f0f7ff; padding:15px; border-radius:5px; margin-bottom:10px;">
+                    <h5 style="margin-top:0">{topic['tema']}</h5>
+                    <p><strong>Crecimiento anual:</strong> {topic['crecimiento']} | <strong>Año de emergencia:</strong> {topic['año_emergencia']}</p>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            # Resumen generado por IA
+            st.info("""
+            💡 **Análisis de tendencias IA:**
+            
+            En el campo de la diabetes, se observa un crecimiento constante en investigación de agonistas del receptor GLP-1, con un aumento exponencial a partir de 2018, coincidiendo con la publicación de resultados cardiovasculares favorables.
+            
+            Los inhibidores SGLT2 muestran una tendencia de crecimiento aún más pronunciada desde 2015, probablemente impulsada por sus beneficios cardiovasculares y renales descubiertos en ensayos pivotales.
+            
+            El análisis de co-citación sugiere una creciente convergencia entre investigación en diabetes, obesidad y cardiología, reflejando un enfoque más integral en el manejo cardiometabólico.
+            
+            Las colaboraciones internacionales han aumentado un 42% en el período analizado, con una red especialmente fuerte entre instituciones de EE.UU., Reino Unido y Alemania.
+            
+            Los temas emergentes con mayor potencial disruptivo incluyen los agonistas duales/triples GLP-1/GIP, nuevas formulaciones orales y aplicaciones de inteligencia artificial en medicina de precisión para diabetes.
+            """)
+
+    # Demostración de análisis de redes
+    elif tipo_analisis == "Network Analysis":
+        st.subheader("Network Analysis de Evidencia Científica")
+        
+        st.markdown("""
+        Esta herramienta permite visualizar las interrelaciones entre publicaciones, autores, instituciones y conceptos científicos.
+        """)
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            concepto_central = st.selectbox(
+                "Concepto central",
+                ["Diabetes tipo 2", "Alzheimer", "Cáncer de páncreas", "Obesidad", "COVID-19"]
+            )
+        
+        with col2:
+            profundidad_red = st.slider(
+                "Profundidad de análisis",
+                min_value=1,
+                max_value=4,
+                value=2,
+                help="Nivel de expansión de la red desde el concepto central"
+            )
+        
+        tipo_red = st.radio(
+            "Tipo de red a analizar",
+            ["Conceptos relacionados", "Co-citación de autores", "Colaboración institucional"],
+            horizontal=True
+        )
+        
+        # Botón para ejecutar análisis de red
+        if st.button("Generar análisis de red", use_container_width=True):
+            st.success(f"Analizando red de {tipo_red} para {concepto_central}")
+            
+            # Simular visualización de red
+            st.image("https://via.placeholder.com/800x500?text=Network+Analysis+Visualization", use_column_width=True)
+            
+            # Métricas de red
+            st.subheader("Métricas de la red")
+            
+            col1, col2, col3, col4 = st.columns(4)
+            
+            with col1:
+                st.metric("Nodos", "284")
+            with col2:
+                st.metric("Conexiones", "1,240")
+            with col3:
+                st.metric("Centralidad promedio", "3.2")
+            with col4:
+                st.metric("Densidad", "0.042")
+            
+            # Nodos principales
+            st.subheader("Nodos principales por centralidad")
+            
+            # Simular datos de nodos principales
+            top_nodes = pd.DataFrame({
+                'Nodo': [
+                    "Resistencia a insulina", "Obesidad", "Disfunción mitocondrial", 
+                    "Inflamación crónica", "Microbioma intestinal", "Estrés oxidativo"
+                ] if tipo_red == "Conceptos relacionados" else [
+                    "Smith, J.R.", "Wang, L.", "Johnson, M.K.", 
+                    "Zhang, X.", "Patel, A.", "González, R.M."
+                ] if tipo_red == "Co-citación de autores" else [
+                    "Harvard Medical School", "Mayo Clinic", "Oxford University", 
+                    "Karolinska Institute", "NIH", "Seoul National University"
+                ],
+                'Centralidad': [0.82, 0.76, 0.71, 0.68, 0.65, 0.63],
+                'Conexiones': [58, 52, 47, 43, 41, 38]
+            })
+            
+            st.dataframe(top_nodes, use_container_width=True)
+            
+            # Comunidades identificadas
+            st.subheader("Comunidades identificadas en la red")
+            
+            # Simular datos de comunidades
+            communities = [
+                {"nombre": "Metabolismo energético", "nodos": 42, "densidad": 0.72},
+                {"nombre": "Señalización de insulina", "nodos": 37, "densidad": 0.68},
+                {"nombre": "Inflamación y citoquinas", "nodos": 31, "densidad": 0.57},
+                {"nombre": "Microbioma y barrera intestinal", "nodos": 28, "densidad": 0.64},
+                {"nombre": "Función mitocondrial", "nodos": 25, "densidad": 0.71}
+            ] if tipo_red == "Conceptos relacionados" else [
+                {"nombre": "Grupo Harvard-MIT", "nodos": 38, "densidad": 0.81},
+                {"nombre": "Consorcio Europeo de Diabetes", "nodos": 35, "densidad": 0.73},
+                {"nombre": "Red Asia-Pacífico", "nodos": 29, "densidad": 0.68},
+                {"nombre": "Grupo Escandinavo", "nodos": 24, "densidad": 0.79}
+            ]
+            
+            for i, comm in enumerate(communities):
+                st.markdown(f"""
+                <div style="background-color:#f0f7ff; padding:10px; border-radius:5px; margin-bottom:10px;">
+                    <h5 style="margin-top:0">{comm['nombre']}</h5>
+                    <p><strong>Nodos:</strong> {comm['nodos']} | <strong>Densidad interna:</strong> {comm['densidad']}</p>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            # Evolución temporal de la red
+            st.subheader("Evolución temporal de la red (2015-2025)")
+            
+            # Simular datos de evolución temporal
+            temporal_data = pd.DataFrame({
+                'Año': list(range(2015, 2026)),
+                'Nodos': [80, 95, 112, 134, 156, 185, 205, 224, 248, 265, 284],
+                'Conexiones': [120, 180, 267, 340, 445, 564, 684, 790, 912, 1084, 1240],
+                'Densidad': [0.038, 0.040, 0.043, 0.039, 0.037, 0.041, 0.042, 0.040, 0.039, 0.042, 0.042]
+            })
+            
+            # Crear gráfico de evolución temporal
+            base = alt.Chart(temporal_data).encode(
+                x=alt.X('Año:O', title='Año')
+            )
+            
+            # Línea para nodos
+            line_nodos = base.mark_line(color='blue').encode(
+                y=alt.Y('Nodos:Q', title='Número de nodos', axis=alt.Axis(titleColor='blue'))
+            )
+            
+            # Puntos para nodos
+            points_nodos = base.mark_circle(color='blue', size=60).encode(
+                y='Nodos:Q'
+            )
+            
+            # Crear una segunda escala para las conexiones
+            line_conexiones = base.mark_line(color='red').encode(
+                y=alt.Y('Conexiones:Q', title='Número de conexiones', axis=alt.Axis(titleColor='red')),
+            )
+            
+            points_conexiones = base.mark_circle(color='red', size=60).encode(
+                y='Conexiones:Q'
+            )
+            
+            # Combinar gráficos
+            temporal_chart = alt.layer(line_nodos, points_nodos, line_conexiones, points_conexiones).resolve_scale(
+                y='independent'
+            ).properties(
+                height=400
+            ).interactive()
+            
+            st.altair_chart(temporal_chart, use_container_width=True)
+            
+            # Análisis y conclusiones
+            st.info("""
+            💡 **Análisis de redes IA:**
+            
+            El análisis de redes en torno a la Diabetes tipo 2 revela una estructura compleja con alta interconectividad entre diferentes dominios científicos.
+            
+            Los nodos con mayor centralidad (resistencia a insulina, obesidad y disfunción mitocondrial) actúan como puentes entre diferentes comunidades temáticas, sugiriendo su papel fundamental en la fisiopatología.
+            
+            La evolución temporal muestra un crecimiento exponencial de conexiones entre 2018-2022, posiblemente reflejando la integración acelerada de conocimientos entre campos tradicionalmente separados como metabolismo, inflamación y microbioma.
+            
+            Las cinco comunidades identificadas muestran alta cohesión interna pero también conexiones significativas entre ellas, evidenciando la naturaleza multifactorial de la enfermedad.
+            
+            El análisis sugiere áreas emergentes con potencial para nueva investigación en las intersecciones entre microbioma y señalización de insulina, así como entre inflamación y función mitocondrial, que presentan menos conexiones pero crecimiento reciente.
+            """)
+
+# 5. CONFIGURACIÓN
+elif "⚙️ Configuración" in menu:
+    st.title("⚙️ Configuración de EvidenceWatch Pro")
+    
+    # Panel de configuración
+    st.markdown("""
+    <div style='background-color:#f0f7ff; padding:15px; border-radius:5px; margin-bottom:20px;'>
+        <h4 style='margin-top:0'>Personalice su experiencia</h4>
+        <p>Configure sus preferencias y personalice la plataforma según sus necesidades específicas.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Tabs para organizar la configuración
+    tab1, tab2, tab3, tab4 = st.tabs(["🔔 Alertas", "🏷️ Etiquetas", "🔍 Búsqueda", "🔐 Cuenta"])
+    
+    # Tab 1: Configuración de alertas
+    with tab1:
+        st.subheader("Configuración de alertas y notificaciones")
+        
+        # Frecuencia de notificaciones
+        frecuencia = st.radio(
+            "Frecuencia de notificaciones",
+            ["Diaria", "Cada 2-3 días", "Semanal", "Quincenal"],
+            horizontal=True
+        )
+        
+        # Canal de notificaciones
+        canal = st.multiselect(
+            "Canales de notificación",
+            ["Email", "Aplicación móvil", "Navegador", "Slack", "Microsoft Teams"],
+            default=["Email", "Aplicación móvil"]
+        )
+        
+        # Tipos de contenido
+        st.markdown("##### Tipos de contenido para alertas")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            alerta_articulos = st.checkbox("Nuevos artículos", value=True)
+            alerta_guideline = st.checkbox("Actualizaciones de guías clínicas", value=True)
+            alerta_trials = st.checkbox("Ensayos clínicos", value=True)
+        
+        with col2:
+            alerta_retraction = st.checkbox("Retractaciones", value=True)
+            alerta_preprint = st.checkbox("Preprints", value=False)
+            alerta_conference = st.checkbox("Resúmenes de congresos", value=False)
+        
+        # Alertas por temas
+        st.markdown("##### Configurar alertas por tema")
+        
+        if st.checkbox("Añadir nuevo tema de seguimiento"):
+            col1, col2, col3 = st.columns([3, 2, 1])
+            
+            with col1:
+                nuevo_tema = st.text_input("Término o frase a monitorizar")
+            
+            with col2:
+                relevancia = st.slider("Relevancia mínima", 1, 5, 3)
+            
+            with col3:
+                st.markdown("&nbsp;")  # Espacio en blanco para alinear con el botón
+                st.button("➕ Añadir")
+        
+        # Temas actualmente monitorizados
+        st.markdown("##### Temas actualmente monitorizados")
+        
+        temas_seguimiento = [
+            {"tema": "Semaglutide", "relevancia": 5, "frecuencia": "Diaria"},
+            {"tema": "GLP-1 receptor agonists", "relevancia": 4, "frecuencia": "Diaria"},
+            {"tema": "Tirzepatide", "relevancia": 4, "frecuencia": "Semanal"},
+            {"tema": "Diabetes guidelines", "relevancia": 3, "frecuencia": "Semanal"}
+        ]
+        
+        for tema in temas_seguimiento:
+            col1, col2, col3 = st.columns([3, 1, 1])
+            
+            with col1:
+                st.markdown(f"**{tema['tema']}**")
+            
+            with col2:
+                st.markdown(f"Relevancia: {'🟢' * tema['relevancia']}{'⚪' * (5-tema['relevancia'])}")
+            
+            with col3:
+                st.markdown(f"{tema['frecuencia']} ✏️ 🗑️")
+        
+        # Guardar configuración
+        st.button("💾 Guardar configuración de alertas", use_container_width=True)
+    
+    # Tab 2: Configuración de etiquetas
+    with tab2:
+        st.subheader("Gestión de etiquetas personalizadas")
+        
+        st.markdown("""
+        Las etiquetas le permiten organizar y clasificar la literatura científica según sus necesidades.
+        """)
+        
+        # Crear nueva etiqueta
+        col1, col2, col3 = st.columns([3, 2, 1])
+        
+        with col1:
+            nueva_etiqueta = st.text_input("Nombre de la etiqueta")
+        
+        with col2:
+            color_etiqueta = st.color_picker("Color", "#1E88E5")
+        
+        with col3:
+            st.markdown("&nbsp;")  # Espacio en blanco para alinear con el botón
+            st.button("➕ Crear etiqueta")
+        
+        # Etiquetas actuales
+        st.markdown("##### Etiquetas actuales")
+        
+        etiquetas = [
+            {"nombre": "Review para journal club", "color": "#2e7d32", "articulos": 12},
+            {"nombre": "Evidencia controvertida", "color": "#d32f2f", "articulos": 8},
+            {"nombre": "Para meta-análisis", "color": "#7b1fa2", "articulos": 23},
+            {"nombre": "Implementación clínica", "color": "#1565c0", "articulos": 17},
+            {"nombre": "Metodología dudosa", "color": "#f57c00", "articulos": 5}
+        ]
+        
+        for etiqueta in etiquetas:
+            col1, col2, col3 = st.columns([3, 1, 1])
+            
+            with col1:
+                st.markdown(f"""
+                <div style="display:flex; align-items:center;">
+                    <div style="width:15px; height:15px; border-radius:50%; background-color:{etiqueta['color']}; margin-right:8px;"></div>
+                    <span><strong>{etiqueta['nombre']}</strong></span>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            with col2:
+                st.markdown(f"{etiqueta['articulos']} artículos")
+            
+            with col3:
+                st.markdown("✏️ 🗑️")
+        
+        # Reglas automáticas
+        st.markdown("##### Reglas automáticas de etiquetado")
+        
+        if st.checkbox("Añadir regla automática"):
+            col1, col2, col3 = st.columns([2, 2, 1])
+            
+            with col1:
+                condicion = st.selectbox(
+                    "Condición",
+                    ["Contiene en título", "Contiene en abstract", "Autor es", "Journal es", "Factor de impacto >"]
+                )
+                valor_condicion = st.text_input("Valor")
+            
+            with col2:
+                etiqueta_aplicar = st.selectbox(
+                    "Aplicar etiqueta",
+                    [e["nombre"] for e in etiquetas]
+                )
+            
+            with col3:
+                st.markdown("&nbsp;")
+                st.button("➕ Añadir regla")
+        
+        # Reglas existentes
+        st.markdown("##### Reglas existentes")
+        
+        reglas = [
+            {"condicion": "Contiene en título", "valor": "meta-analysis", "etiqueta": "Para meta-análisis"},
+            {"condicion": "Journal es", "valor": "The Lancet", "etiqueta": "Review para journal club"},
+            {"condicion": "Factor de impacto >", "valor": "10", "etiqueta": "Review para journal club"}
+        ]
+        
+        for regla in reglas:
+            st.markdown(f"""
+            <div style="display:flex; justify-content:space-between; padding:8px; background-color:#f8f9fa; border-radius:5px; margin-bottom:5px;">
+                <div><strong>Si</strong> [{regla['condicion']}] <strong>es</strong> "{regla['valor']}"</div>
+                <div><strong>→ Aplicar</strong> "{regla['etiqueta']}"</div>
+                <div>✏️ 🗑️</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Guardar configuración
+        st.button("💾 Guardar configuración de etiquetas", use_container_width=True)
+    
+    # Tab 3: Configuración de búsqueda
+    with tab3:
+        st.subheader("Preferencias de búsqueda")
+        
+        # Fuentes preferidas
+        st.markdown("##### Fuentes de datos")
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.checkbox("PubMed", value=True)
+            st.checkbox("Web of Science", value=False)
+            st.checkbox("EMBASE", value=False)
+        
+        with col2:
+            st.checkbox("Europe PMC", value=True)
+            st.checkbox("Clinical Trials", value=True)
+            st.checkbox("Google Scholar", value=False)
+        
+        with col3:
+            st.checkbox("Cochrane Library", value=True)
+            st.checkbox("LILACS", value=False)
+            st.checkbox("medRxiv", value=True)
+        
+        # Criterios de relevancia
+        st.markdown("##### Criterios de relevancia para resultados")
+        
+        st.slider("Importancia de actualidad", 1, 10, 7)
+        st.slider("Importancia de factor de impacto", 1, 10, 6)
+        st.slider("Importancia de número de citas", 1, 10, 5)
+        
+        # Filtros predeterminados
+        st.markdown("##### Filtros predeterminados")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.multiselect(
+                "Tipos de estudio preferidos",
+                ["Meta-análisis", "Ensayo clínico", "Revisión sistemática", "Estudio observacional", "Guía clínica"],
+                default=["Meta-análisis", "Ensayo clínico", "Revisión sistemática"]
+            )
+        
+        with col2:
+            st.multiselect(
+                "Especies preferidas",
+                ["Humanos", "Ratones", "Ratas", "Primates no humanos", "Células in vitro"],
+                default=["Humanos"]
+            )
+        
+        # Opciones de AI
+        st.markdown("##### Configuración de análisis por IA")
+        
+        nivel_analisis = st.select_slider(
+            "Nivel de análisis automático",
+            options=["Básico", "Estándar", "Profundo", "Experto"],
+            value="Estándar"
+        )
+        
+        st.checkbox("Generar resúmenes automáticamente", value=True)
+        st.checkbox("Extraer hallazgos clave", value=True)
+        st.checkbox("Evaluar calidad metodológica", value=True)
+        
+        # Guardar configuración
+        st.button("💾 Guardar preferencias de búsqueda", use_container_width=True)
+    
+    # Tab 4: Configuración de cuenta
+    with tab4:
+        st.subheader("Gestión de cuenta")
+        
+        # Información de perfil
+        st.markdown("##### Información de perfil")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.text_input("Nombre", value="Dr. Usuario")
+            st.text_input("Email", value="usuario@ejemplo.com")
+            st.text_input("Institución", value="Hospital Universitario")
+        
+        with col2:
+            st.selectbox("Especialidad", ["Endocrinología", "Cardiología", "Oncología", "Neurología", "Medicina interna"])
+            st.multiselect(
+                "Áreas de interés",
+                ["Diabetes", "Obesidad", "Enfermedades cardiovasculares", "Trastornos tiroideos"],
+                default=["Diabetes", "Obesidad"]
+            )
+        
+        # Plan de suscripción
+        st.markdown("##### Plan de suscripción")
+        
+        st.info("🔹 **Plan Pro** - Renovación automática el 15/12/2025")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.metric("Búsquedas avanzadas", "68/100 restantes")
+        
+        with col2:
+            st.metric("Análisis de IA", "124/200 restantes")
+        
+        with col3:
+            st.metric("Meta-análisis", "4/5 restantes")
+        
+        # Opciones de plan
+        st.button("Actualizar a Plan Premium", use_container_width=True)
+        
+        # Exportación e importación
+        st.markdown("##### Exportación e importación")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.button("📤 Exportar biblioteca", use_container_width=True)
+            st.button("📤 Exportar preferencias", use_container_width=True)
+        
+        with col2:
+            st.file_uploader("📥 Importar biblioteca", type=["json", "xml", "ris"])
+            st.file_uploader("📥 Importar preferencias", type=["json"])
+        
+        # Integración con herramientas
+        st.markdown("##### Integración con herramientas")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.checkbox("Zotero", value=True)
+            st.checkbox("Mendeley", value=False)
+        
+        with col2:
+            st.checkbox("EndNote", value=False)
+            st.checkbox("Microsoft Teams", value=True)
+        
+        with col3:
+            st.checkbox("Slack", value=False)
+            st.checkbox("Notion", value=True)
+        
+        # Eliminar cuenta
+        st.markdown("##### Peligro")
+        
+        with st.expander("⚠️ Eliminar cuenta"):
+            st.warning("Esta acción eliminará permanentemente su cuenta y todos los datos asociados.")
+            st.text_input("Escriba 'ELIMINAR' para confirmar")
+            st.button("🗑️ Eliminar cuenta permanentemente")
+
+# Añadir acción para mostrar información sobre la aplicación
+with st.sidebar:
+    st.markdown("---")
+    if st.button("ℹ️ Acerca de EvidenceWatch"):
+        st.sidebar.markdown("""
+        **EvidenceWatch Pro v2.5**
+        
+        Desarrollado por MedTech Solutions
+        
+        Esta aplicación está diseñada para profesionales de la salud que desean mantenerse actualizados con la última evidencia científica relevante para su práctica clínica.
+        
+        © 2025 Todos los derechos reservados
+        """)
