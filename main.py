@@ -17,7 +17,8 @@ from utils.summarizer import resumir_texto
 # Cargar variables de entorno
 load_dotenv()
 
-# Configuración general de la página
+# ------------------------------
+# 1) Configuración general de la página
 st.set_page_config(
     page_title="EvidenceWatch Pro | Monitor de Evidencia Científica",
     layout="wide",
@@ -25,30 +26,20 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Función para cargar animaciones Lottie
-def load_lottieurl(url: str):
-    try:
-        r = requests.get(url)
-        if r.status_code != 200:
-            return None
-        return r.json()
-    except BaseException:
-        return None
-
 # ------------------------------
-# ESTILOS FUTURISTAS REVISADOS
+# 2) Bloque de ESTILOS FUTURISTAS
 st.markdown("""
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
-  /* Fondo general */
+  /* Fondo y texto global */
   .main, .stApp {
     background-color: #121212 !important;
     color: #ECEFF1 !important;
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Orbitron', sans-serif !important;
   }
 
-  /* Cabeceras */
+  /* Cabeceras neón */
   h1, h2, h3 {
     color: #00FFD1 !important;
     letter-spacing: 1px;
@@ -63,24 +54,28 @@ st.markdown("""
   /* Tarjetas de dashboard */
   .dashboard-card {
     background-color: #1E1E1E !important;
-    box-shadow: 0 4px 12px rgba(0, 255, 209, 0.2) !important;
     border: 1px solid #00FFD1 !important;
+    box-shadow: 0 4px 12px rgba(0,255,209,0.2) !important;
+    padding: 20px !important;
+    margin-bottom: 20px !important;
   }
 
-  /* Botones */
+  /* Botones principales */
   .stButton>button {
     background-color: #00FFD1 !important;
     color: #121212 !important;
-    font-weight: 700;
-    text-transform: uppercase;
-    transition: background-color 0.2s ease;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    transition: background-color 0.2s ease !important;
   }
   .stButton>button:hover {
     background-color: #00BFA5 !important;
   }
 
   /* Inputs, selects y sliders */
-  .stTextInput>div>input, .stSelectBox>div>div, .stSlider>div {
+  .stTextInput>div>input,
+  .stSelectbox>div>div,
+  .stSlider>div {
     background-color: #1E1E1E !important;
     color: #ECEFF1 !important;
     border: 1px solid #333 !important;
@@ -88,10 +83,26 @@ st.markdown("""
 
   /* Ocultar footer predeterminado */
   footer {
-    visibility: hidden;
+    visibility: hidden !important;
   }
 </style>
 """, unsafe_allow_html=True)
+
+# ------------------------------
+# 3) Función para cargar animaciones Lottie
+def load_lottieurl(url: str):
+    try:
+        r = requests.get(url)
+        if r.status_code != 200:
+            return None
+        return r.json()
+    except BaseException:
+        return None
+
+# ------------------------------
+# 4) Resto de tu aplicación (sidebar, dashboards, búsquedas, clinical trials, análisis, configuración...)
+#    Copia aquí todo el código que ya tenías tras este punto, sin modificarlo,
+#    de modo que Streamlit cargue primero los estilos y luego pinte tus componentes.
 
 
 # ----- SIDEBAR -----
