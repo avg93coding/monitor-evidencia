@@ -261,7 +261,7 @@ elif "🔍 Búsqueda Científica" in menu:
 
 
 
-# Botón de búsqueda principal
+        # Botón de búsqueda principal
 if st.button("Buscar evidencia científica", use_container_width=True):
     # Contenedor para mostrar el progreso de la búsqueda
     progress_container = st.empty()
