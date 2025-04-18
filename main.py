@@ -19,31 +19,32 @@ load_dotenv()
 
 # Configuración general de la página
 st.set_page_config(
-page_title="EvidenceWatch Pro | Monitor de Evidencia Científica",
-layout="wide",
-page_icon="🧬",
-initial_sidebar_state="expanded"
+    page_title="EvidenceWatch Pro | Monitor de Evidencia Científica",
+    layout="wide",
+    page_icon="🧬",
+    initial_sidebar_state="expanded"
 )
 
 # Función para cargar animaciones Lottie
+
+
 def load_lottieurl(url: str):
     try:
         r = requests.get(url)
         if r.status_code != 200:
             return None
         return r.json()
-    except:
+    except BaseException:
         return None
 
 
 # Cargar estilos CSS mejorados
 estilos_path = "assets/estilos.css"
 if os.path.exists(estilos_path):
-    with open(estilos_path) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
+with open(estilos_path) as f:
+st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 else:
-# CSS por defecto si no existe el archivo
+    # CSS por defecto si no existe el archivo
 st.markdown("""
 <style>
 .main {
@@ -102,10 +103,12 @@ st.sidebar.markdown("### 🧬 EvidenceWatch Pro")
 st.sidebar.markdown("---")
 
 # Menú de navegación lateral mejorado con iconos
-menu = st.sidebar.radio(
-"Navegación",
-["🏠 Dashboard", "🔍 Búsqueda Científica", "🧪 Clinical Trials", "📊 Análisis", "⚙️ Configuración"]
-)
+menu = st.sidebar.radio("Navegación",
+                        ["🏠 Dashboard",
+                         "🔍 Búsqueda Científica",
+                         "🧪 Clinical Trials",
+                         "📊 Análisis",
+                         "⚙️ Configuración"])
 
 # Mostrar información de usuario simulada
 st.sidebar.markdown("---")
@@ -118,25 +121,25 @@ st.sidebar.caption("Plan Pro - 80% utilizado")
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 📅 Filtros Temporales")
 fecha_inicio = st.sidebar.date_input(
-"Desde",
-datetime.now() - timedelta(days=365)
+    "Desde",
+    datetime.now() - timedelta(days=365)
 )
 fecha_fin = st.sidebar.date_input(
-"Hasta",
-datetime.now()
+    "Hasta",
+    datetime.now()
 )
 
 # Añadir filtros adicionales
 st.sidebar.markdown("### 🔄 Filtros Avanzados")
 filtro_tipo = st.sidebar.multiselect(
-"Tipo de contenido",
-["Artículos", "Reviews", "Ensayos Clínicos", "Meta-análisis", "Guías Clínicas"],
-default=["Artículos", "Reviews"]
+    "Tipo de contenido",
+    ["Artículos", "Reviews", "Ensayos Clínicos", "Meta-análisis", "Guías Clínicas"],
+    default=["Artículos", "Reviews"]
 )
 
 filtro_acceso = st.sidebar.radio(
-"Acceso",
-["Todos", "Open Access", "Solo suscritos"]
+    "Acceso",
+    ["Todos", "Open Access", "Solo suscritos"]
 )
 
 st.sidebar.markdown("---")
@@ -146,7 +149,7 @@ st.sidebar.caption("© 2025 EvidenceWatch Pro v2.5")
 
 # 1. DASHBOARD
 if "🏠 Dashboard" in menu:
-# Header de bienvenida
+    # Header de bienvenida
 col1, col2 = st.columns([3, 1])
 with col1:
 st.title("🧬 EvidenceWatch Pro")
@@ -157,7 +160,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 with col2:
-# Cargar animación Lottie para la sección principal
+    # Cargar animación Lottie para la sección principal
 lottie_url = "https://assets6.lottiefiles.com/packages/lf20_m6cuL6.json"
 lottie_json = load_lottieurl(lottie_url)
 if lottie_json:
@@ -210,21 +213,23 @@ st.markdown("### 📊 Tendencias de Publicaciones")
 
 # Datos simulados para el gráfico
 chart_data = pd.DataFrame({
-'fecha': pd.date_range(start='2025-01-01', periods=90, freq='D'),
-'PubMed': [random.randint(80, 150) for _ in range(90)],
-'Europe PMC': [random.randint(60, 120) for _ in range(90)],
-'Clinical Trials': [random.randint(10, 40) for _ in range(90)]
+    'fecha': pd.date_range(start='2025-01-01', periods=90, freq='D'),
+    'PubMed': [random.randint(80, 150) for _ in range(90)],
+    'Europe PMC': [random.randint(60, 120) for _ in range(90)],
+    'Clinical Trials': [random.randint(10, 40) for _ in range(90)]
 })
 
 # Crear gráfico de líneas con Altair
-chart = alt.Chart(chart_data.melt('fecha', var_name='fuente', value_name='publicaciones')).mark_line().encode(
-x=alt.X('fecha:T', title='Fecha'),
-y=alt.Y('publicaciones:Q', title='Número de Publicaciones'),
-color=alt.Color('fuente:N', legend=alt.Legend(title="Fuente")),
-tooltip=['fecha', 'fuente', 'publicaciones']
-).properties(
-height=300
-).interactive()
+chart = alt.Chart(
+    chart_data.melt(
+        'fecha', var_name='fuente', value_name='publicaciones')).mark_line().encode(
+            x=alt.X(
+                'fecha:T', title='Fecha'), y=alt.Y(
+                    'publicaciones:Q', title='Número de Publicaciones'), color=alt.Color(
+                        'fuente:N', legend=alt.Legend(
+                            title="Fuente")), tooltip=[
+                                'fecha', 'fuente', 'publicaciones']).properties(
+    height=300).interactive()
 
 st.altair_chart(chart, use_container_width=True)
 
@@ -295,8 +300,10 @@ st.markdown("""
 col1, col2 = st.columns([3, 1])
 
 with col1:
-query = st.text_input("🔎 Escriba su término de búsqueda", value="semaglutide", 
-            placeholder="Ej: semaglutide in obesity, machine learning diagnostics...")
+query = st.text_input(
+    "🔎 Escriba su término de búsqueda",
+    value="semaglutide",
+    placeholder="Ej: semaglutide in obesity, machine learning diagnostics...")
 
 with col2:
 max_resultados = st.slider("Resultados por fuente", 5, 50, 10)
@@ -306,13 +313,22 @@ with st.expander("Opciones avanzadas de búsqueda"):
 col1, col2, col3 = st.columns(3)
 
 with col1:
-idioma = st.selectbox("Idioma", ["Todos", "Inglés", "Español", "Francés", "Alemán"])
-ordenar_por = st.selectbox("Ordenar por", ["Relevancia", "Fecha (reciente)", "Fecha (antigua)", "Factor de impacto"])
+idioma = st.selectbox(
+    "Idioma", [
+        "Todos", "Inglés", "Español", "Francés", "Alemán"])
+ordenar_por = st.selectbox(
+    "Ordenar por", [
+        "Relevancia", "Fecha (reciente)", "Fecha (antigua)", "Factor de impacto"])
 
 with col2:
-tipo_documento = st.multiselect("Tipo de documento", 
-                        ["Todos", "Artículo original", "Revisión", "Metaanálisis", "Ensayo clínico", "Guía clínica"],
-                        default=["Todos"])
+tipo_documento = st.multiselect("Tipo de documento",
+                                ["Todos",
+                                 "Artículo original",
+                                 "Revisión",
+                                 "Metaanálisis",
+                                 "Ensayo clínico",
+                                 "Guía clínica"],
+                                default=["Todos"])
 años = st.slider("Rango de años", 2000, 2025, (2020, 2025))
 
 with col3:
@@ -323,7 +339,7 @@ incluir_preprints = st.checkbox("Incluir preprints", value=True)
 # Botón de búsqueda principal
 if st.button("Buscar evidencia científica", use_container_width=True):
 
-# Contenedor para mostrar el progreso de la búsqueda
+    # Contenedor para mostrar el progreso de la búsqueda
 progress_container = st.empty()
 
 progress_bar = progress_container.progress(0)
@@ -337,26 +353,28 @@ progress_container.empty()
 st.success(f"Se encontraron 87 resultados para '{query}' en todas las fuentes")
 
 # Pestañas para organizar los resultados
-tab1, tab2, tab3, tab4 = st.tabs(["📑 Todos los resultados", "📊 PubMed", "🌍 Europe PMC", "💡 Análisis de IA"])
+tab1, tab2, tab3, tab4 = st.tabs(
+    ["📑 Todos los resultados", "📊 PubMed", "🌍 Europe PMC", "💡 Análisis de IA"])
 
 # Pestaña 1: Todos los resultados
 with tab1:
-# Simulación de resultados combinados
+    # Simulación de resultados combinados
 for i in range(1, 6):
 with st.expander(f"Efficacy and safety of semaglutide in type 2 diabetes patients - Phase {i} clinical trial"):
 col1, col2 = st.columns([4, 1])
 
 with col1:
-    st.markdown(f"""
+    st.markdown(
+        f"""
     **Autores:** Jensen AB, Smith JR, Anderson P, et al.
-    
-    **Publicado en:** New England Journal of Medicine • {2025-i} • Factor de impacto: {round(10.5 - i*0.5, 1)}
-    
+
+    **Publicado en:** New England Journal of Medicine • {2025 - i} • Factor de impacto: {round(10.5 - i * 0.5, 1)}
+
     **Resumen:** This randomized clinical trial evaluated the efficacy and safety of semaglutide in patients with type 2 diabetes over a 52-week period. The study demonstrated significant improvements in glycemic control and weight reduction compared to placebo, with a favorable safety profile.
-    
+
     **Conclusiones clave:** Semaglutide showed dose-dependent reductions in HbA1c and body weight with acceptable tolerability.
     """)
-    
+
     st.markdown("""
     <div style='display:flex; gap:5px'>
         <span style='background-color:#e1f5fe; color:#0277bd; padding:3px 8px; border-radius:15px; font-size:12px'>Diabetes</span>
@@ -368,12 +386,12 @@ with col1:
 with col2:
     st.markdown(f"""
     **PMID:** 3652891{i}
-    
-    **Citado:** {120 - i*15} veces
-    
+
+    **Citado:** {120 - i * 15} veces
+
     **Acceso:** {'Abierto ✓' if i % 2 == 0 else 'Restringido'}
     """)
-    
+
     st.download_button(
         label="PDF",
         data=b"sample",
@@ -390,18 +408,18 @@ if resultados_pubmed:
 for r in resultados_pubmed:
     with st.expander(r["Título"]):
         col1, col2 = st.columns([3, 1])
-        
+
         with col1:
             st.markdown(f"**Autores:** {r['Autores']}")
             st.markdown(f"**Fuente:** {r['Fuente']}")
             st.markdown(f"**Resumen original:**\n\n{r['Resumen']}")
-        
+
         with col2:
             st.markdown(f"**PMID:** {r['PMID']}")
             # Añadir botón para guardar o exportar
             st.button("⭐ Guardar", key=f"save_pubmed_{r['PMID']}")
             st.button("📤 Exportar", key=f"export_pubmed_{r['PMID']}")
-        
+
         # Resumen por IA
         st.markdown("**🧠 Análisis de IA:**")
         with st.spinner("Analizando contenido..."):
@@ -419,13 +437,13 @@ if resultados_epmc:
 for e in resultados_epmc:
     with st.expander(e["Título"]):
         col1, col2 = st.columns([3, 1])
-        
+
         with col1:
             st.markdown(f"**Fuente:** {e['Fuente']}")
             st.markdown(f"**Tipo de publicación:** {e['Tipo']}")
             # Añadir enlaces a texto completo cuando estén disponibles
             st.markdown(f"**Enlace:** [Ver artículo completo]({e['Enlace']})")
-        
+
         with col2:
             st.markdown(f"**ID:** {e['ID']}")
             # Añadir botones de acción
@@ -455,16 +473,16 @@ st.markdown("""
 # Gráfico de tendencias
 st.subheader("Evolución de las publicaciones")
 chart_data = pd.DataFrame({
-'Año': [2020, 2021, 2022, 2023, 2024, 2025],
-'Publicaciones': [12, 18, 29, 47, 68, 23]
+    'Año': [2020, 2021, 2022, 2023, 2024, 2025],
+    'Publicaciones': [12, 18, 29, 47, 68, 23]
 })
 
 chart = alt.Chart(chart_data).mark_line(point=True).encode(
-x='Año:O',
-y='Publicaciones:Q',
-tooltip=['Año', 'Publicaciones']
+    x='Año:O',
+    y='Publicaciones:Q',
+    tooltip=['Año', 'Publicaciones']
 ).properties(
-height=300
+    height=300
 ).interactive()
 
 st.altair_chart(chart, use_container_width=True)
@@ -536,28 +554,34 @@ st.markdown("""
 col1, col2, col3 = st.columns(3)
 
 with col1:
-area_terapeutica = st.selectbox(
-"Área terapéutica",
-["Todas", "Oncología", "Cardiología", "Endocrinología", "Neurología", "Inmunología", "Enfermedades raras"]
-)
+area_terapeutica = st.selectbox("Área terapéutica",
+                                ["Todas",
+                                 "Oncología",
+                                 "Cardiología",
+                                 "Endocrinología",
+                                 "Neurología",
+                                 "Inmunología",
+                                 "Enfermedades raras"])
 
 with col2:
 fase_ensayo = st.multiselect(
-"Fase del ensayo",
-["I", "II", "III", "IV"],
-default=["III", "IV"]
+    "Fase del ensayo",
+    ["I", "II", "III", "IV"],
+    default=["III", "IV"]
 )
 
 with col3:
 estado_ensayo = st.multiselect(
-"Estado",
-["Reclutando", "Activo, no reclutando", "Completado", "No iniciado"],
-default=["Reclutando", "Activo, no reclutando"]
+    "Estado",
+    ["Reclutando", "Activo, no reclutando", "Completado", "No iniciado"],
+    default=["Reclutando", "Activo, no reclutando"]
 )
 
 # Búsqueda específica para ensayos
-query_trials = st.text_input("🔎 Buscar ensayos clínicos", value="", 
-            placeholder="Ej: semaglutide, cáncer de páncreas, hipertensión resistente...")
+query_trials = st.text_input(
+    "🔎 Buscar ensayos clínicos",
+    value="",
+    placeholder="Ej: semaglutide, cáncer de páncreas, hipertensión resistente...")
 
 if st.button("Buscar ensayos clínicos", use_container_width=True):
 st.success(f"Se encontraron 42 ensayos clínicos que coinciden con sus criterios")
@@ -581,17 +605,18 @@ st.markdown(f"""
 
 **Intervención principal:** Semaglutide oral {random.choice(['10mg', '15mg', '20mg'])} una vez al día vs placebo
 
-**Actualización reciente:** {random.choice(['Resultados preliminares', 'Cambio en criterios de inclusión', 'Nuevo sitio de estudio', 'Reporte de seguridad'])}
-""")
+**Actualización reciente:** {random.choice(['Resultados preliminares',
+                                            'Cambio en criterios de inclusión', 'Nuevo sitio de estudio', 'Reporte de seguridad'])} """)
 
 with col2:
-st.markdown(f"""
+st.markdown(
+    f"""
 **Participantes:** {random.randint(1000, 5000)}
 
 **Fecha inicio:** {random.choice(['Ene', 'Feb', 'Mar', 'Abr'])} 202{random.randint(3, 5)}
 
-**Fecha estimada conclusión:** {random.choice(['Jun', 'Jul', 'Ago', 'Sep', 'Oct'])} 202{random.randint(5, 7)}
-""")
+**Fecha estimada conclusión:** {random.choice(['Jun', 'Jul', 'Ago', 'Sep', 'Oct'])}
+            202{random.randint(5, 7)} """)
 
 # Botones de acción
 st.button("📌 Seguir", key=f"follow_trial_{i}")
@@ -611,10 +636,10 @@ st.markdown("""
 st.markdown("##### Distribución de sitios de estudio:")
 # Simulación de datos para el mapa
 trial_sites = pd.DataFrame({
-'lat': [random.uniform(25, 60) for _ in range(15)],
-'lon': [random.uniform(-120, 30) for _ in range(15)],
-'sitio': [f'Centro {random.randint(1, 100)}' for _ in range(15)],
-'pacientes_reclutados': [random.randint(10, 100) for _ in range(15)]
+    'lat': [random.uniform(25, 60) for _ in range(15)],
+    'lon': [random.uniform(-120, 30) for _ in range(15)],
+    'sitio': [f'Centro {random.randint(1, 100)}' for _ in range(15)],
+    'pacientes_reclutados': [random.randint(10, 100) for _ in range(15)]
 })
 
 st.map(trial_sites)
@@ -622,20 +647,52 @@ st.map(trial_sites)
 # Línea de tiempo del ensayo
 st.markdown("##### Línea de tiempo del ensayo:")
 
-timeline_chart = alt.Chart(pd.DataFrame({
-'Fase': ['Diseño', 'Inicio', 'Reclutamiento', 'Tratamiento', 'Análisis', 'Resultados'],
-'Inicio': [0, 3, 6, 8, 24, 30],
-'Fin': [3, 6, 18, 24, 30, 36],
-'Estado': ['Completado', 'Completado', 'En progreso', 'Planificado', 'Planificado', 'Planificado']
-})).mark_bar().encode(
-x='Inicio',
-x2='Fin',
-y='Fase',
-color=alt.Color('Estado', scale=alt.Scale(
-    domain=['Completado', 'En progreso', 'Planificado'],
-    range=['#2ecc71', '#3498db', '#95a5a6']
-))
-).properties(height=200)
+timeline_chart = alt.Chart(
+    pd.DataFrame(
+        {
+            'Fase': [
+                'Diseño',
+                'Inicio',
+                'Reclutamiento',
+                'Tratamiento',
+                'Análisis',
+                'Resultados'],
+            'Inicio': [
+                0,
+                3,
+                6,
+                8,
+                24,
+                30],
+            'Fin': [
+                3,
+                6,
+                18,
+                24,
+                30,
+                36],
+            'Estado': [
+                'Completado',
+                'Completado',
+                'En progreso',
+                'Planificado',
+                'Planificado',
+                'Planificado']})).mark_bar().encode(
+    x='Inicio',
+    x2='Fin',
+    y='Fase',
+    color=alt.Color(
+        'Estado',
+        scale=alt.Scale(
+            domain=[
+                'Completado',
+                'En progreso',
+                'Planificado'],
+            range=[
+                '#2ecc71',
+                '#3498db',
+                '#95a5a6']))).properties(
+    height=200)
 
 st.altair_chart(timeline_chart, use_container_width=True)
 
@@ -669,9 +726,9 @@ st.markdown("""
 
 # Selector de tipo de análisis
 tipo_analisis = st.radio(
-"Seleccione tipo de análisis",
-["Comparativo", "Meta-análisis", "Tendencias temporales", "Network Analysis"],
-horizontal=True
+    "Seleccione tipo de análisis",
+    ["Comparativo", "Meta-análisis", "Tendencias temporales", "Network Analysis"],
+    horizontal=True
 )
 
 # Demostración de herramienta de análisis comparativo
@@ -682,55 +739,65 @@ col1, col2 = st.columns(2)
 
 with col1:
 tratamiento1 = st.selectbox(
-"Tratamiento 1",
-["Semaglutide", "Liraglutide", "Tirzepatide", "Empagliflozin", "Canagliflozin"]
+    "Tratamiento 1",
+    ["Semaglutide", "Liraglutide", "Tirzepatide", "Empagliflozin", "Canagliflozin"]
 )
 
 with col2:
 tratamiento2 = st.selectbox(
-"Tratamiento 2",
-["Tirzepatide", "Semaglutide", "Liraglutide", "Dulaglutide", "Placebo"],
-index=1
+    "Tratamiento 2",
+    ["Tirzepatide", "Semaglutide", "Liraglutide", "Dulaglutide", "Placebo"],
+    index=1
 )
 
-endpoint = st.multiselect(
-"Endpoints a comparar",
-["Reducción HbA1c", "Pérdida de peso", "Eventos cardiovasculares", "Eventos adversos", "Abandonos"],
-default=["Reducción HbA1c", "Pérdida de peso"]
-)
+endpoint = st.multiselect("Endpoints a comparar",
+                          ["Reducción HbA1c",
+                           "Pérdida de peso",
+                           "Eventos cardiovasculares",
+                           "Eventos adversos",
+                           "Abandonos"],
+                          default=["Reducción HbA1c",
+                                   "Pérdida de peso"])
 
 # Botón para ejecutar análisis
 if st.button("Ejecutar análisis comparativo", use_container_width=True):
-st.success(f"Analizando diferencias entre {tratamiento1} y {tratamiento2} usando 17 estudios")
+st.success(f"Analizando diferencias entre {tratamiento1} y {
+           tratamiento2} usando 17 estudios")
 
 # Forest plot simulado
 st.subheader("Forest Plot - Diferencia media en reducción de HbA1c")
 
 # Datos simulados para forest plot
 forest_data = pd.DataFrame({
-'Estudio': [f"Estudio {chr(65+i)}" for i in range(8)],
-'Año': [random.randint(2020, 2025) for _ in range(8)],
-'DiferenciaMean': [-0.3, -0.5, -0.2, -0.4, -0.6, -0.3, -0.5, -0.4],
-'LowerCI': [-0.5, -0.7, -0.4, -0.6, -0.8, -0.5, -0.7, -0.6],
-'UpperCI': [-0.1, -0.3, -0.1, -0.2, -0.4, -0.1, -0.3, -0.2],
-'Weight': [12, 15, 10, 18, 14, 11, 9, 11]
+    'Estudio': [f"Estudio {chr(65 + i)}" for i in range(8)],
+    'Año': [random.randint(2020, 2025) for _ in range(8)],
+    'DiferenciaMean': [-0.3, -0.5, -0.2, -0.4, -0.6, -0.3, -0.5, -0.4],
+    'LowerCI': [-0.5, -0.7, -0.4, -0.6, -0.8, -0.5, -0.7, -0.6],
+    'UpperCI': [-0.1, -0.3, -0.1, -0.2, -0.4, -0.1, -0.3, -0.2],
+    'Weight': [12, 15, 10, 18, 14, 11, 9, 11]
 })
 
 # Crear forest plot con Altair
 base = alt.Chart(forest_data).encode(
-y=alt.Y('Estudio:N', sort=None)
+    y=alt.Y('Estudio:N', sort=None)
 )
 
 lines = base.mark_rule().encode(
-x=alt.X('LowerCI:Q', title='Diferencia en HbA1c (%)'),
-x2='UpperCI:Q'
+    x=alt.X('LowerCI:Q', title='Diferencia en HbA1c (%)'),
+    x2='UpperCI:Q'
 )
 
-points = base.mark_circle(size=100).encode(
-x='DiferenciaMean:Q',
-color=alt.value('black'),
-tooltip=['Estudio', 'Año', 'DiferenciaMean', 'LowerCI', 'UpperCI', 'Weight']
-)
+points = base.mark_circle(
+    size=100).encode(
+        x='DiferenciaMean:Q',
+        color=alt.value('black'),
+        tooltip=[
+            'Estudio',
+            'Año',
+            'DiferenciaMean',
+            'LowerCI',
+            'UpperCI',
+            'Weight'])
 
 forest_chart = (lines + points).properties(height=300)
 
@@ -739,20 +806,36 @@ st.altair_chart(forest_chart, use_container_width=True)
 # Gráfico de comparación de barras
 st.subheader("Comparación de endpoints")
 
-comparison_data = pd.DataFrame({
-'Endpoint': ['Reducción HbA1c (%)', 'Pérdida de peso (kg)', 'Reducción PAS (mmHg)', 'Eventos CV (%)'],
-tratamiento1: [1.6, 5.2, 3.8, 3.2],
-tratamiento2: [1.2, 3.6, 2.9, 3.5],
-}).melt('Endpoint', var_name='Tratamiento', value_name='Valor')
+comparison_data = pd.DataFrame(
+    {
+        'Endpoint': [
+            'Reducción HbA1c (%)',
+            'Pérdida de peso (kg)',
+            'Reducción PAS (mmHg)',
+            'Eventos CV (%)'],
+        tratamiento1: [
+            1.6,
+            5.2,
+            3.8,
+            3.2],
+        tratamiento2: [
+            1.2,
+            3.6,
+            2.9,
+            3.5],
+    }).melt(
+    'Endpoint',
+    var_name='Tratamiento',
+    value_name='Valor')
 
 bar_chart = alt.Chart(comparison_data).mark_bar().encode(
-x=alt.X('Tratamiento:N'),
-y=alt.Y('Valor:Q'),
-color=alt.Color('Tratamiento:N', legend=None),
-column=alt.Column('Endpoint:N'),
-tooltip=['Tratamiento', 'Valor']
+    x=alt.X('Tratamiento:N'),
+    y=alt.Y('Valor:Q'),
+    color=alt.Color('Tratamiento:N', legend=None),
+    column=alt.Column('Endpoint:N'),
+    tooltip=['Tratamiento', 'Valor']
 ).properties(
-width=150
+    width=150
 )
 
 st.altair_chart(bar_chart, use_container_width=True)
@@ -761,36 +844,54 @@ st.altair_chart(bar_chart, use_container_width=True)
 st.subheader("Números Necesarios a Tratar (NNT) y para Dañar (NNH)")
 
 nnt_data = pd.DataFrame({
-'Resultado': ['Reducción HbA1c >1%', 'Pérdida >5% peso corporal', 'Prevención evento CV', 
-            'Náusea', 'Vómito', 'Discontinuación por EA'],
-'NNT/NNH': [4, 6, 32, -12, -18, -42],
-'IC 95%': ['3-5', '5-8', '22-68', '-9 a -16', '-14 a -25', '-30 a -86'],
-'Tipo': ['Beneficio', 'Beneficio', 'Beneficio', 'Daño', 'Daño', 'Daño']
+    'Resultado': ['Reducción HbA1c >1%', 'Pérdida >5% peso corporal', 'Prevención evento CV',
+                  'Náusea', 'Vómito', 'Discontinuación por EA'],
+    'NNT/NNH': [4, 6, 32, -12, -18, -42],
+    'IC 95%': ['3-5', '5-8', '22-68', '-9 a -16', '-14 a -25', '-30 a -86'],
+    'Tipo': ['Beneficio', 'Beneficio', 'Beneficio', 'Daño', 'Daño', 'Daño']
 })
 
+
 def highlight_rows(row):
+
+
 if row['Tipo'] == 'Beneficio':
 return ['background-color: #d4edda'] * len(row)
 else:
 return ['background-color: #f8d7da'] * len(row)
 
-st.dataframe(nnt_data.style.apply(highlight_rows, axis=1), use_container_width=True)
+st.dataframe(
+    nnt_data.style.apply(
+        highlight_rows,
+        axis=1),
+    use_container_width=True)
 
 # Análisis de calidad de la evidencia
 st.subheader("Evaluación de calidad de la evidencia")
 
-grade_data = pd.DataFrame({
-'Dominio': ['Riesgo de sesgo', 'Inconsistencia', 'Evidencia indirecta', 'Imprecisión', 'Sesgo de publicación', 'Calidad global'],
-'Evaluación': ['Bajo', 'Moderado', 'Bajo', 'Bajo', 'No detectado', 'Alta'],
-'Explicación': [
-'La mayoría de estudios fueron doble ciego con bajo riesgo de sesgo',
-'Heterogeneidad moderada (I²=42%)',
-'Comparaciones directas disponibles',
-'Intervalos de confianza estrechos',
-'Análisis de funnel plot sin asimetrías significativas',
-'Evidencia de alta calidad para la comparación entre tratamientos'
-]
-})
+grade_data = pd.DataFrame(
+    {
+        'Dominio': [
+            'Riesgo de sesgo',
+            'Inconsistencia',
+            'Evidencia indirecta',
+            'Imprecisión',
+            'Sesgo de publicación',
+            'Calidad global'],
+        'Evaluación': [
+            'Bajo',
+            'Moderado',
+            'Bajo',
+            'Bajo',
+            'No detectado',
+            'Alta'],
+        'Explicación': [
+            'La mayoría de estudios fueron doble ciego con bajo riesgo de sesgo',
+            'Heterogeneidad moderada (I²=42%)',
+            'Comparaciones directas disponibles',
+            'Intervalos de confianza estrechos',
+            'Análisis de funnel plot sin asimetrías significativas',
+            'Evidencia de alta calidad para la comparación entre tratamientos']})
 
 st.table(grade_data)
 
@@ -816,25 +917,25 @@ col1, col2 = st.columns(2)
 
 with col1:
 intervencion = st.selectbox(
-"Intervención",
-["GLP-1 RA", "SGLT2i", "DPP-4i", "Insulina", "Metformina"]
+    "Intervención",
+    ["GLP-1 RA", "SGLT2i", "DPP-4i", "Insulina", "Metformina"]
 )
 
 poblacion = st.selectbox(
-"Población",
-["DMT2", "Obesidad", "Insuficiencia cardíaca", "Enfermedad renal crónica"]
+    "Población",
+    ["DMT2", "Obesidad", "Insuficiencia cardíaca", "Enfermedad renal crónica"]
 )
 
 with col2:
 desenlace = st.selectbox(
-"Desenlace principal",
-["Mortalidad CV", "HbA1c", "Peso corporal", "Eventos renales", "MACE"]
+    "Desenlace principal",
+    ["Mortalidad CV", "HbA1c", "Peso corporal", "Eventos renales", "MACE"]
 )
 
 modelo = st.radio(
-"Modelo estadístico",
-["Efectos aleatorios", "Efectos fijos"],
-horizontal=True
+    "Modelo estadístico",
+    ["Efectos aleatorios", "Efectos fijos"],
+    horizontal=True
 )
 
 # Opciones avanzadas
@@ -846,14 +947,15 @@ heterogeneidad = st.checkbox("Análisis de heterogeneidad", value=True)
 metaregresion = st.checkbox("Meta-regresión", value=False)
 
 with col2:
-sesgo_publicacion = st.checkbox("Evaluación de sesgo de publicación", value=True)
+sesgo_publicacion = st.checkbox(
+    "Evaluación de sesgo de publicación", value=True)
 analisis_sensibilidad = st.checkbox("Análisis de sensibilidad", value=True)
 
 with col3:
 subgrupos = st.multiselect(
-"Análisis de subgrupos",
-["Edad", "Sexo", "Duración diabetes", "Comorbilidades", "HbA1c basal"],
-default=["Edad", "HbA1c basal"]
+    "Análisis de subgrupos",
+    ["Edad", "Sexo", "Duración diabetes", "Comorbilidades", "HbA1c basal"],
+    default=["Edad", "HbA1c basal"]
 )
 
 # Botón para ejecutar meta-análisis
@@ -861,7 +963,8 @@ if st.button("Ejecutar meta-análisis", use_container_width=True):
 with st.spinner("Analizando estudios..."):
 time.sleep(2)  # Simular procesamiento
 
-st.success(f"Meta-análisis completado | 23 estudios incluidos | 58,721 participantes")
+st.success(
+    f"Meta-análisis completado | 23 estudios incluidos | 58,721 participantes")
 
 # Resultados del meta-análisis
 col1, col2 = st.columns([2, 1])
@@ -870,7 +973,9 @@ with col1:
 st.subheader("Forest Plot - Efectos sobre Mortalidad CV")
 
 # Imagen placeholder para forest plot
-st.image("https://via.placeholder.com/700x400?text=Forest+Plot", use_column_width=True)
+st.image(
+    "https://via.placeholder.com/700x400?text=Forest+Plot",
+    use_column_width=True)
 
 with col2:
 st.subheader("Resultados principales")
@@ -891,44 +996,45 @@ st.subheader("Funnel Plot - Evaluación de sesgo de publicación")
 
 # Datos simulados para funnel plot
 funnel_data = pd.DataFrame({
-'LogRR': [-0.3 + random.uniform(-0.2, 0.2) for _ in range(23)],
-'SE': [random.uniform(0.05, 0.5) for _ in range(23)],
-'Estudio': [f"Estudio {i+1}" for i in range(23)]
+    'LogRR': [-0.3 + random.uniform(-0.2, 0.2) for _ in range(23)],
+    'SE': [random.uniform(0.05, 0.5) for _ in range(23)],
+    'Estudio': [f"Estudio {i + 1}" for i in range(23)]
 })
 
 funnel_chart = alt.Chart(funnel_data).mark_circle(size=80).encode(
-x=alt.X('LogRR:Q', title='Log Risk Ratio', scale=alt.Scale(domain=[-1, 0.4])),
-y=alt.Y('SE:Q', title='Standard Error', scale=alt.Scale(domain=[0.5, 0], reverse=True)),
-tooltip=['Estudio', 'LogRR', 'SE']
+    x=alt.X('LogRR:Q', title='Log Risk Ratio', scale=alt.Scale(domain=[-1, 0.4])),
+    y=alt.Y('SE:Q', title='Standard Error', scale=alt.Scale(domain=[0.5, 0], reverse=True)),
+    tooltip=['Estudio', 'LogRR', 'SE']
 ).properties(
-width=700,
-height=400
+    width=700,
+    height=400
 )
 
 # Línea vertical para el efecto promedio
-vline = alt.Chart(pd.DataFrame({'x': [-0.198]})).mark_rule(color='red').encode(x='x')
+vline = alt.Chart(pd.DataFrame(
+    {'x': [-0.198]})).mark_rule(color='red').encode(x='x')
 
 # Líneas de embudo
 limit_data = pd.DataFrame({
-'LogRR': [-0.198 - 1.96 * x, -0.198 + 1.96 * x, None] for x in 
-        [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
+    'LogRR': [-0.198 - 1.96 * x, -0.198 + 1.96 * x, None] for x in
+    [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
 }).melt(var_name='limit', value_name='LogRR')
 
 limit_data['SE'] = limit_data['limit'].map({
-f"-0.198 - 1.96 * {x}": x for x in [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
+    f"-0.198 - 1.96 * {x}": x for x in [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
 } | {
-f"-0.198 + 1.96 * {x}": x for x in [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
+    f"-0.198 + 1.96 * {x}": x for x in [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
 } | {
-'None': None
+    'None': None
 })
 
 limit_data = limit_data.dropna()
 
 funnel_lines = alt.Chart(limit_data).mark_line(
-color='blue', opacity=0.5, strokeDash=[5, 5]
+    color='blue', opacity=0.5, strokeDash=[5, 5]
 ).encode(
-x='LogRR:Q',
-y='SE:Q'
+    x='LogRR:Q',
+    y='SE:Q'
 )
 
 st.altair_chart(vline + funnel_chart + funnel_lines, use_container_width=True)
@@ -937,38 +1043,38 @@ st.altair_chart(vline + funnel_chart + funnel_lines, use_container_width=True)
 st.subheader("Análisis de subgrupos")
 
 subgroup_data = pd.DataFrame({
-'Subgrupo': ['Global', '≤65 años', '>65 años', 'HbA1c ≤8%', 'HbA1c >8%', 'Con ECV', 'Sin ECV'],
-'RR': [0.82, 0.84, 0.76, 0.88, 0.75, 0.72, 0.91],
-'Lower': [0.74, 0.75, 0.65, 0.78, 0.67, 0.63, 0.82],
-'Upper': [0.91, 0.95, 0.89, 0.99, 0.84, 0.83, 1.02],
-'p_interaction': ['', '0.21', '', '0.03', '', '0.001', ''],
-'Significativo': [True, True, True, True, True, True, False]
+    'Subgrupo': ['Global', '≤65 años', '>65 años', 'HbA1c ≤8%', 'HbA1c >8%', 'Con ECV', 'Sin ECV'],
+    'RR': [0.82, 0.84, 0.76, 0.88, 0.75, 0.72, 0.91],
+    'Lower': [0.74, 0.75, 0.65, 0.78, 0.67, 0.63, 0.82],
+    'Upper': [0.91, 0.95, 0.89, 0.99, 0.84, 0.83, 1.02],
+    'p_interaction': ['', '0.21', '', '0.03', '', '0.001', ''],
+    'Significativo': [True, True, True, True, True, True, False]
 })
 
 # Crear gráfico de subgrupos con Altair
 base = alt.Chart(subgroup_data).encode(
-y=alt.Y('Subgrupo:N', sort=None)
+    y=alt.Y('Subgrupo:N', sort=None)
 )
 
 lines = base.mark_rule().encode(
-x=alt.X('Lower:Q', title='Risk Ratio (IC 95%)'),
-x2='Upper:Q',
-color=alt.Color('Significativo:N', scale=alt.Scale(
-domain=[True, False],
-range=['#1E88E5', '#ccc']
-), legend=None)
+    x=alt.X('Lower:Q', title='Risk Ratio (IC 95%)'),
+    x2='Upper:Q',
+    color=alt.Color('Significativo:N', scale=alt.Scale(
+        domain=[True, False],
+        range=['#1E88E5', '#ccc']
+    ), legend=None)
 )
 
 points = base.mark_circle(size=100).encode(
-x='RR:Q',
-color=alt.value('black'),
-tooltip=['Subgrupo', 'RR', 'Lower', 'Upper', 'p_interaction']
+    x='RR:Q',
+    color=alt.value('black'),
+    tooltip=['Subgrupo', 'RR', 'Lower', 'Upper', 'p_interaction']
 )
 
 # Línea vertical en RR=1
 vline = alt.Chart(pd.DataFrame({'x': [1]})).mark_rule(
-color='red', 
-strokeDash=[5, 5]
+    color='red',
+    strokeDash=[5, 5]
 ).encode(x='x')
 
 subgroup_chart = (vline + lines + points).properties(height=300)
@@ -978,9 +1084,9 @@ st.altair_chart(subgroup_chart, use_container_width=True)
 # Tabla de p-interacción
 st.markdown("**Valores p para interacción entre subgrupos:**")
 interaction_data = pd.DataFrame({
-'Subgrupo': ['Edad (≤65 vs >65)', 'HbA1c basal (≤8% vs >8%)', 'ECV basal (sí vs no)'],
-'Valor p': ['0.21', '0.03', '0.001'],
-'Significancia': ['No significativo', 'Significativo', 'Altamente significativo']
+    'Subgrupo': ['Edad (≤65 vs >65)', 'HbA1c basal (≤8% vs >8%)', 'ECV basal (sí vs no)'],
+    'Valor p': ['0.21', '0.03', '0.001'],
+    'Significancia': ['No significativo', 'Significativo', 'Altamente significativo']
 })
 
 st.table(interaction_data)
@@ -1013,41 +1119,45 @@ col1, col2 = st.columns(2)
 
 with col1:
 area_investigacion = st.selectbox(
-"Área de investigación",
-["Diabetes", "Oncología", "Cardiología", "Neurología", "Inmunología"]
+    "Área de investigación",
+    ["Diabetes", "Oncología", "Cardiología", "Neurología", "Inmunología"]
 )
 
 with col2:
 periodo = st.slider(
-"Periodo de análisis",
-min_value=2000,
-max_value=2025,
-value=(2010, 2025)
+    "Periodo de análisis",
+    min_value=2000,
+    max_value=2025,
+    value=(2010, 2025)
 )
 
-temas_interes = st.multiselect(
-"Temas de interés",
-["GLP-1", "SGLT2", "Inmunoterapia", "Inteligencia Artificial", "Terapia génica", "Medicina de precisión"],
-default=["GLP-1", "SGLT2"]
-)
+temas_interes = st.multiselect("Temas de interés",
+                               ["GLP-1",
+                                "SGLT2",
+                                "Inmunoterapia",
+                                "Inteligencia Artificial",
+                                "Terapia génica",
+                                "Medicina de precisión"],
+                               default=["GLP-1",
+                                        "SGLT2"])
 
 temas_interes = ["GLP-1", "SGLT2", "Obesidad", "Diabetes tipo 2"]
 
 # Botón para ejecutar análisis de tendencias
 if st.button("Analizar tendencias", use_container_width=True):
 
-# Simular datos de tendencias
+    # Simular datos de tendencias
 años = list(range(2010, 2026))
 
 trend_data = pd.DataFrame({
-'Año': años * len(temas_interes),
-'Tema': [tema for tema in temas_interes for _ in años],
-'Publicaciones': [
-int(100 * (1 + 0.2 * (año - 2010) + random.uniform(-0.05, 0.05))) if tema == "GLP-1" else
-int(50 * (1 + 0.4 * (año - 2015) + random.uniform(-0.05, 0.05))) if tema == "SGLT2" else
-int(30 * (1 + 0.5 * (año - 2010) + random.uniform(-0.05, 0.05)))
-for tema in temas_interes for año in años
-]
+    'Año': años * len(temas_interes),
+    'Tema': [tema for tema in temas_interes for _ in años],
+    'Publicaciones': [
+        int(100 * (1 + 0.2 * (año - 2010) + random.uniform(-0.05, 0.05))) if tema == "GLP-1" else
+        int(50 * (1 + 0.4 * (año - 2015) + random.uniform(-0.05, 0.05))) if tema == "SGLT2" else
+        int(30 * (1 + 0.5 * (año - 2010) + random.uniform(-0.05, 0.05)))
+        for tema in temas_interes for año in años
+    ]
 })
 
 # Simular periodo de análisis (puedes usar input del usuario si lo tienes)
@@ -1055,19 +1165,23 @@ periodo = (2015, 2025)
 
 # Filtrar por el periodo seleccionado
 trend_data = trend_data[
-(trend_data['Año'] >= periodo[0]) & (trend_data['Año'] <= periodo[1])
+    (trend_data['Año'] >= periodo[0]) & (trend_data['Año'] <= periodo[1])
 ]
 
 # Gráfico de líneas de tendencias
-st.subheader(f"Evolución de publicaciones en {', '.join(temas_interes)} ({periodo[0]}–{periodo[1]})")
+st.subheader(
+    f"Evolución de publicaciones en {
+        ', '.join(temas_interes)} ({
+            periodo[0]}–{
+                periodo[1]})")
 
 trend_chart = alt.Chart(trend_data).mark_line(point=True).encode(
-x=alt.X('Año:O', title='Año'),
-y=alt.Y('Publicaciones:Q', title='Número de publicaciones'),
-color=alt.Color('Tema:N', legend=alt.Legend(title="Tema")),
-tooltip=['Año', 'Tema', 'Publicaciones']
+    x=alt.X('Año:O', title='Año'),
+    y=alt.Y('Publicaciones:Q', title='Número de publicaciones'),
+    color=alt.Color('Tema:N', legend=alt.Legend(title="Tema")),
+    tooltip=['Año', 'Tema', 'Publicaciones']
 ).properties(
-height=400
+    height=400
 ).interactive()
 
 st.altair_chart(trend_chart, use_container_width=True)
@@ -1076,20 +1190,20 @@ st.altair_chart(trend_chart, use_container_width=True)
 st.subheader("Análisis de impacto por tema")
 
 impact_data = pd.DataFrame({
-'Tema': temas_interes,
-'Publicaciones': [
-sum(trend_data[trend_data['Tema'] == tema]['Publicaciones']) 
-for tema in temas_interes
-],
-'Citas promedio': [
-round(random.uniform(15, 35), 1) for _ in temas_interes
-],
-'Factor impacto': [
-round(random.uniform(3.5, 8.2), 2) for _ in temas_interes
-],
-'Crecimiento anual (%)': [
-round(random.uniform(8, 25), 1) for _ in temas_interes
-]
+    'Tema': temas_interes,
+    'Publicaciones': [
+        sum(trend_data[trend_data['Tema'] == tema]['Publicaciones'])
+        for tema in temas_interes
+    ],
+    'Citas promedio': [
+        round(random.uniform(15, 35), 1) for _ in temas_interes
+    ],
+    'Factor impacto': [
+        round(random.uniform(3.5, 8.2), 2) for _ in temas_interes
+    ],
+    'Crecimiento anual (%)': [
+        round(random.uniform(8, 25), 1) for _ in temas_interes
+    ]
 })
 
 st.dataframe(impact_data, use_container_width=True)
@@ -1098,28 +1212,31 @@ st.dataframe(impact_data, use_container_width=True)
 st.subheader("Mapa de impacto científico")
 
 bubble_data = pd.DataFrame({
-'Tema': temas_interes * 3,
-'Año': [2015, 2020, 2025] * len(temas_interes),
-'Publicaciones': [
-int(random.uniform(100, 200)) for _ in range(len(temas_interes) * 3)
-],
-'Citas': [
-int(random.uniform(500, 5000)) for _ in range(len(temas_interes) * 3)
-],
-'Impacto': [
-round(random.uniform(2, 15), 1) for _ in range(len(temas_interes) * 3)
-]
+    'Tema': temas_interes * 3,
+    'Año': [2015, 2020, 2025] * len(temas_interes),
+    'Publicaciones': [
+        int(random.uniform(100, 200)) for _ in range(len(temas_interes) * 3)
+    ],
+    'Citas': [
+        int(random.uniform(500, 5000)) for _ in range(len(temas_interes) * 3)
+    ],
+    'Impacto': [
+        round(random.uniform(2, 15), 1) for _ in range(len(temas_interes) * 3)
+    ]
 })
 
 bubble_chart = alt.Chart(bubble_data).mark_circle().encode(
-x=alt.X('Publicaciones:Q', title='Número de publicaciones'),
-y=alt.Y('Citas:Q', title='Número de citas'),
-size=alt.Size('Impacto:Q', scale=alt.Scale(range=[100, 1000]), legend=alt.Legend(title="Factor de impacto")),
-color=alt.Color('Tema:N', legend=alt.Legend(title="Tema")),
-tooltip=['Tema', 'Año', 'Publicaciones', 'Citas', 'Impacto']
-).properties(
-height=500
-).interactive()
+    x=alt.X(
+        'Publicaciones:Q', title='Número de publicaciones'), y=alt.Y(
+            'Citas:Q', title='Número de citas'), size=alt.Size(
+                'Impacto:Q', scale=alt.Scale(
+                    range=[
+                        100, 1000]), legend=alt.Legend(
+                            title="Factor de impacto")), color=alt.Color(
+                                'Tema:N', legend=alt.Legend(
+                                    title="Tema")), tooltip=[
+                                        'Tema', 'Año', 'Publicaciones', 'Citas', 'Impacto']).properties(
+    height=500).interactive()
 
 st.altair_chart(bubble_chart, use_container_width=True)
 
@@ -1129,11 +1246,19 @@ st.info("Funcionalidad en desarrollo. Pronto podrás ver mapas de coautoría y c
 
 
 # Simular datos de colaboración internacional
-countries = ['Estados Unidos', 'China', 'Reino Unido', 'Alemania', 'Japón', 'Francia', 'Canadá', 'Australia']
+countries = [
+    'Estados Unidos',
+    'China',
+    'Reino Unido',
+    'Alemania',
+    'Japón',
+    'Francia',
+    'Canadá',
+    'Australia']
 connections = []
 
 for i in range(len(countries)):
-for j in range(i+1, len(countries)):
+for j in range(i + 1, len(countries)):
 if random.random() > 0.3:  # 70% de probabilidad de conexión
     strength = random.randint(5, 30)
     connections.append({
@@ -1142,7 +1267,8 @@ if random.random() > 0.3:  # 70% de probabilidad de conexión
         'strength': strength
     })
 
-# Visualizar la red de colaboración (placeholder - en producción usaría PyVis o NetworkX)
+# Visualizar la red de colaboración (placeholder - en producción usaría
+# PyVis o NetworkX)
 st.markdown("""
 En una implementación completa, aquí se mostraría un gráfico interactivo de redes de colaboración
 entre instituciones y países en el campo seleccionado.
@@ -1157,17 +1283,19 @@ st.dataframe(collab_data, use_container_width=True)
 st.subheader("Temas emergentes identificados")
 
 emerging_topics = [
-{"tema": "Receptores GLP-1 de administración oral", "crecimiento": "+127%", "año_emergencia": 2023},
-{"tema": "Combinaciones GLP-1/GIP", "crecimiento": "+95%", "año_emergencia": 2022},
-{"tema": "Terapias con células madre para diabetes", "crecimiento": "+62%", "año_emergencia": 2024},
-{"tema": "Inteligencia artificial en endocrinología", "crecimiento": "+218%", "año_emergencia": 2021}
+    {"tema": "Receptores GLP-1 de administración oral", "crecimiento": "+127%", "año_emergencia": 2023},
+    {"tema": "Combinaciones GLP-1/GIP", "crecimiento": "+95%", "año_emergencia": 2022},
+    {"tema": "Terapias con células madre para diabetes", "crecimiento": "+62%", "año_emergencia": 2024},
+    {"tema": "Inteligencia artificial en endocrinología", "crecimiento": "+218%", "año_emergencia": 2021}
 ]
 
 for i, topic in enumerate(emerging_topics):
-st.markdown(f"""
+st.markdown(
+    f"""
 <div style="background-color:#f0f7ff; padding:15px; border-radius:5px; margin-bottom:10px;">
 <h5 style="margin-top:0">{topic['tema']}</h5>
-<p><strong>Crecimiento anual:</strong> {topic['crecimiento']} | <strong>Año de emergencia:</strong> {topic['año_emergencia']}</p>
+<p><strong>Crecimiento anual:</strong> {topic['crecimiento']}
+            | <strong>Año de emergencia:</strong> {topic['año_emergencia']}</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1198,31 +1326,33 @@ col1, col2 = st.columns(2)
 
 with col1:
 concepto_central = st.selectbox(
-"Concepto central",
-["Diabetes tipo 2", "Alzheimer", "Cáncer de páncreas", "Obesidad", "COVID-19"]
+    "Concepto central",
+    ["Diabetes tipo 2", "Alzheimer", "Cáncer de páncreas", "Obesidad", "COVID-19"]
 )
 
 with col2:
 profundidad_red = st.slider(
-"Profundidad de análisis",
-min_value=1,
-max_value=4,
-value=2,
-help="Nivel de expansión de la red desde el concepto central"
+    "Profundidad de análisis",
+    min_value=1,
+    max_value=4,
+    value=2,
+    help="Nivel de expansión de la red desde el concepto central"
 )
 
-tipo_red = st.radio(
-"Tipo de red a analizar",
-["Conceptos relacionados", "Co-citación de autores", "Colaboración institucional"],
-horizontal=True
-)
+tipo_red = st.radio("Tipo de red a analizar",
+                    ["Conceptos relacionados",
+                     "Co-citación de autores",
+                     "Colaboración institucional"],
+                    horizontal=True)
 
 # Botón para ejecutar análisis de red
 if st.button("Generar análisis de red", use_container_width=True):
 st.success(f"Analizando red de {tipo_red} para {concepto_central}")
 
 # Simular visualización de red
-st.image("https://via.placeholder.com/800x500?text=Network+Analysis+Visualization", use_column_width=True)
+st.image(
+    "https://via.placeholder.com/800x500?text=Network+Analysis+Visualization",
+    use_column_width=True)
 
 # Métricas de red
 st.subheader("Métricas de la red")
@@ -1243,18 +1373,18 @@ st.subheader("Nodos principales por centralidad")
 
 # Simular datos de nodos principales
 top_nodes = pd.DataFrame({
-'Nodo': [
-"Resistencia a insulina", "Obesidad", "Disfunción mitocondrial", 
-"Inflamación crónica", "Microbioma intestinal", "Estrés oxidativo"
-] if tipo_red == "Conceptos relacionados" else [
-"Smith, J.R.", "Wang, L.", "Johnson, M.K.", 
-"Zhang, X.", "Patel, A.", "González, R.M."
-] if tipo_red == "Co-citación de autores" else [
-"Harvard Medical School", "Mayo Clinic", "Oxford University", 
-"Karolinska Institute", "NIH", "Seoul National University"
-],
-'Centralidad': [0.82, 0.76, 0.71, 0.68, 0.65, 0.63],
-'Conexiones': [58, 52, 47, 43, 41, 38]
+    'Nodo': [
+        "Resistencia a insulina", "Obesidad", "Disfunción mitocondrial",
+        "Inflamación crónica", "Microbioma intestinal", "Estrés oxidativo"
+    ] if tipo_red == "Conceptos relacionados" else [
+        "Smith, J.R.", "Wang, L.", "Johnson, M.K.",
+        "Zhang, X.", "Patel, A.", "González, R.M."
+    ] if tipo_red == "Co-citación de autores" else [
+        "Harvard Medical School", "Mayo Clinic", "Oxford University",
+        "Karolinska Institute", "NIH", "Seoul National University"
+    ],
+    'Centralidad': [0.82, 0.76, 0.71, 0.68, 0.65, 0.63],
+    'Conexiones': [58, 52, 47, 43, 41, 38]
 })
 
 st.dataframe(top_nodes, use_container_width=True)
@@ -1264,20 +1394,21 @@ st.subheader("Comunidades identificadas en la red")
 
 # Simular datos de comunidades
 communities = [
-{"nombre": "Metabolismo energético", "nodos": 42, "densidad": 0.72},
-{"nombre": "Señalización de insulina", "nodos": 37, "densidad": 0.68},
-{"nombre": "Inflamación y citoquinas", "nodos": 31, "densidad": 0.57},
-{"nombre": "Microbioma y barrera intestinal", "nodos": 28, "densidad": 0.64},
-{"nombre": "Función mitocondrial", "nodos": 25, "densidad": 0.71}
+    {"nombre": "Metabolismo energético", "nodos": 42, "densidad": 0.72},
+    {"nombre": "Señalización de insulina", "nodos": 37, "densidad": 0.68},
+    {"nombre": "Inflamación y citoquinas", "nodos": 31, "densidad": 0.57},
+    {"nombre": "Microbioma y barrera intestinal", "nodos": 28, "densidad": 0.64},
+    {"nombre": "Función mitocondrial", "nodos": 25, "densidad": 0.71}
 ] if tipo_red == "Conceptos relacionados" else [
-{"nombre": "Grupo Harvard-MIT", "nodos": 38, "densidad": 0.81},
-{"nombre": "Consorcio Europeo de Diabetes", "nodos": 35, "densidad": 0.73},
-{"nombre": "Red Asia-Pacífico", "nodos": 29, "densidad": 0.68},
-{"nombre": "Grupo Escandinavo", "nodos": 24, "densidad": 0.79}
+    {"nombre": "Grupo Harvard-MIT", "nodos": 38, "densidad": 0.81},
+    {"nombre": "Consorcio Europeo de Diabetes", "nodos": 35, "densidad": 0.73},
+    {"nombre": "Red Asia-Pacífico", "nodos": 29, "densidad": 0.68},
+    {"nombre": "Grupo Escandinavo", "nodos": 24, "densidad": 0.79}
 ]
 
 for i, comm in enumerate(communities):
-st.markdown(f"""
+st.markdown(
+    f"""
 <div style="background-color:#f0f7ff; padding:10px; border-radius:5px; margin-bottom:10px;">
 <h5 style="margin-top:0">{comm['nombre']}</h5>
 <p><strong>Nodos:</strong> {comm['nodos']} | <strong>Densidad interna:</strong> {comm['densidad']}</p>
@@ -1289,42 +1420,53 @@ st.subheader("Evolución temporal de la red (2015-2025)")
 
 # Simular datos de evolución temporal
 temporal_data = pd.DataFrame({
-'Año': list(range(2015, 2026)),
-'Nodos': [80, 95, 112, 134, 156, 185, 205, 224, 248, 265, 284],
-'Conexiones': [120, 180, 267, 340, 445, 564, 684, 790, 912, 1084, 1240],
-'Densidad': [0.038, 0.040, 0.043, 0.039, 0.037, 0.041, 0.042, 0.040, 0.039, 0.042, 0.042]
+    'Año': list(range(2015, 2026)),
+    'Nodos': [80, 95, 112, 134, 156, 185, 205, 224, 248, 265, 284],
+    'Conexiones': [120, 180, 267, 340, 445, 564, 684, 790, 912, 1084, 1240],
+    'Densidad': [0.038, 0.040, 0.043, 0.039, 0.037, 0.041, 0.042, 0.040, 0.039, 0.042, 0.042]
 })
 
 # Crear gráfico de evolución temporal
 base = alt.Chart(temporal_data).encode(
-x=alt.X('Año:O', title='Año')
+    x=alt.X('Año:O', title='Año')
 )
 
 # Línea para nodos
-line_nodos = base.mark_line(color='blue').encode(
-y=alt.Y('Nodos:Q', title='Número de nodos', axis=alt.Axis(titleColor='blue'))
-)
+line_nodos = base.mark_line(
+    color='blue').encode(
+        y=alt.Y(
+            'Nodos:Q',
+            title='Número de nodos',
+            axis=alt.Axis(
+                titleColor='blue')))
 
 # Puntos para nodos
 points_nodos = base.mark_circle(color='blue', size=60).encode(
-y='Nodos:Q'
+    y='Nodos:Q'
 )
 
 # Crear una segunda escala para las conexiones
-line_conexiones = base.mark_line(color='red').encode(
-y=alt.Y('Conexiones:Q', title='Número de conexiones', axis=alt.Axis(titleColor='red')),
+line_conexiones = base.mark_line(
+    color='red').encode(
+        y=alt.Y(
+            'Conexiones:Q',
+            title='Número de conexiones',
+            axis=alt.Axis(
+                titleColor='red')),
 )
 
 points_conexiones = base.mark_circle(color='red', size=60).encode(
-y='Conexiones:Q'
+    y='Conexiones:Q'
 )
 
 # Combinar gráficos
-temporal_chart = alt.layer(line_nodos, points_nodos, line_conexiones, points_conexiones).resolve_scale(
-y='independent'
-).properties(
-height=400
-).interactive()
+temporal_chart = alt.layer(
+    line_nodos,
+    points_nodos,
+    line_conexiones,
+    points_conexiones).resolve_scale(
+        y='independent').properties(
+    height=400).interactive()
 
 st.altair_chart(temporal_chart, use_container_width=True)
 
@@ -1356,7 +1498,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Tabs para organizar la configuración
-tab1, tab2, tab3, tab4 = st.tabs(["🔔 Alertas", "🏷️ Etiquetas", "🔍 Búsqueda", "🔐 Cuenta"])
+tab1, tab2, tab3, tab4 = st.tabs(
+    ["🔔 Alertas", "🏷️ Etiquetas", "🔍 Búsqueda", "🔐 Cuenta"])
 
 # Tab 1: Configuración de alertas
 with tab1:
@@ -1364,16 +1507,16 @@ st.subheader("Configuración de alertas y notificaciones")
 
 # Frecuencia de notificaciones
 frecuencia = st.radio(
-"Frecuencia de notificaciones",
-["Diaria", "Cada 2-3 días", "Semanal", "Quincenal"],
-horizontal=True
+    "Frecuencia de notificaciones",
+    ["Diaria", "Cada 2-3 días", "Semanal", "Quincenal"],
+    horizontal=True
 )
 
 # Canal de notificaciones
 canal = st.multiselect(
-"Canales de notificación",
-["Email", "Aplicación móvil", "Navegador", "Slack", "Microsoft Teams"],
-default=["Email", "Aplicación móvil"]
+    "Canales de notificación",
+    ["Email", "Aplicación móvil", "Navegador", "Slack", "Microsoft Teams"],
+    default=["Email", "Aplicación móvil"]
 )
 
 # Tipos de contenido
@@ -1410,10 +1553,10 @@ st.button("➕ Añadir")
 st.markdown("##### Temas actualmente monitorizados")
 
 temas_seguimiento = [
-{"tema": "Semaglutide", "relevancia": 5, "frecuencia": "Diaria"},
-{"tema": "GLP-1 receptor agonists", "relevancia": 4, "frecuencia": "Diaria"},
-{"tema": "Tirzepatide", "relevancia": 4, "frecuencia": "Semanal"},
-{"tema": "Diabetes guidelines", "relevancia": 3, "frecuencia": "Semanal"}
+    {"tema": "Semaglutide", "relevancia": 5, "frecuencia": "Diaria"},
+    {"tema": "GLP-1 receptor agonists", "relevancia": 4, "frecuencia": "Diaria"},
+    {"tema": "Tirzepatide", "relevancia": 4, "frecuencia": "Semanal"},
+    {"tema": "Diabetes guidelines", "relevancia": 3, "frecuencia": "Semanal"}
 ]
 
 for tema in temas_seguimiento:
@@ -1423,7 +1566,8 @@ with col1:
 st.markdown(f"**{tema['tema']}**")
 
 with col2:
-st.markdown(f"Relevancia: {'🟢' * tema['relevancia']}{'⚪' * (5-tema['relevancia'])}")
+st.markdown(f"Relevancia: {
+            '🟢' * tema['relevancia']}{'⚪' * (5 - tema['relevancia'])}")
 
 with col3:
 st.markdown(f"{tema['frecuencia']} ✏️ 🗑️")
@@ -1456,21 +1600,24 @@ st.button("➕ Crear etiqueta")
 st.markdown("##### Etiquetas actuales")
 
 etiquetas = [
-{"nombre": "Review para journal club", "color": "#2e7d32", "articulos": 12},
-{"nombre": "Evidencia controvertida", "color": "#d32f2f", "articulos": 8},
-{"nombre": "Para meta-análisis", "color": "#7b1fa2", "articulos": 23},
-{"nombre": "Implementación clínica", "color": "#1565c0", "articulos": 17},
-{"nombre": "Metodología dudosa", "color": "#f57c00", "articulos": 5}
+    {"nombre": "Review para journal club", "color": "#2e7d32", "articulos": 12},
+    {"nombre": "Evidencia controvertida", "color": "#d32f2f", "articulos": 8},
+    {"nombre": "Para meta-análisis", "color": "#7b1fa2", "articulos": 23},
+    {"nombre": "Implementación clínica", "color": "#1565c0", "articulos": 17},
+    {"nombre": "Metodología dudosa", "color": "#f57c00", "articulos": 5}
 ]
 
 for etiqueta in etiquetas:
 col1, col2, col3 = st.columns([3, 1, 1])
 
 with col1:
-st.markdown(f"""
+st.markdown(
+    f"""
 <div style="display:flex; align-items:center;">
-<div style="width:15px; height:15px; border-radius:50%; background-color:{etiqueta['color']}; margin-right:8px;"></div>
-<span><strong>{etiqueta['nombre']}</strong></span>
+<div style="width:15px; height:15px; border-radius:50%; background-color:{
+        etiqueta['color']}; margin-right:8px;"></div>
+<span><strong>{
+            etiqueta['nombre']}</strong></span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1487,16 +1634,18 @@ if st.checkbox("Añadir regla automática"):
 col1, col2, col3 = st.columns([2, 2, 1])
 
 with col1:
-condicion = st.selectbox(
-"Condición",
-["Contiene en título", "Contiene en abstract", "Autor es", "Journal es", "Factor de impacto >"]
-)
+condicion = st.selectbox("Condición",
+                         ["Contiene en título",
+                          "Contiene en abstract",
+                          "Autor es",
+                          "Journal es",
+                          "Factor de impacto >"])
 valor_condicion = st.text_input("Valor")
 
 with col2:
 etiqueta_aplicar = st.selectbox(
-"Aplicar etiqueta",
-[e["nombre"] for e in etiquetas]
+    "Aplicar etiqueta",
+    [e["nombre"] for e in etiquetas]
 )
 
 with col3:
@@ -1506,14 +1655,19 @@ st.button("➕ Añadir regla")
 # Reglas existentes
 st.markdown("##### Reglas existentes")
 
-reglas = [
-{"condicion": "Contiene en título", "valor": "meta-analysis", "etiqueta": "Para meta-análisis"},
-{"condicion": "Journal es", "valor": "The Lancet", "etiqueta": "Review para journal club"},
-{"condicion": "Factor de impacto >", "valor": "10", "etiqueta": "Review para journal club"}
-]
+reglas = [{"condicion": "Contiene en título",
+           "valor": "meta-analysis",
+           "etiqueta": "Para meta-análisis"},
+          {"condicion": "Journal es",
+           "valor": "The Lancet",
+           "etiqueta": "Review para journal club"},
+          {"condicion": "Factor de impacto >",
+           "valor": "10",
+           "etiqueta": "Review para journal club"}]
 
 for regla in reglas:
-st.markdown(f"""
+st.markdown(
+    f"""
 <div style="display:flex; justify-content:space-between; padding:8px; background-color:#f8f9fa; border-radius:5px; margin-bottom:5px;">
 <div><strong>Si</strong> [{regla['condicion']}] <strong>es</strong> "{regla['valor']}"</div>
 <div><strong>→ Aplicar</strong> "{regla['etiqueta']}"</div>
@@ -1560,26 +1714,30 @@ st.markdown("##### Filtros predeterminados")
 col1, col2 = st.columns(2)
 
 with col1:
-st.multiselect(
-"Tipos de estudio preferidos",
-["Meta-análisis", "Ensayo clínico", "Revisión sistemática", "Estudio observacional", "Guía clínica"],
-default=["Meta-análisis", "Ensayo clínico", "Revisión sistemática"]
-)
+st.multiselect("Tipos de estudio preferidos",
+               ["Meta-análisis",
+                "Ensayo clínico",
+                "Revisión sistemática",
+                "Estudio observacional",
+                "Guía clínica"],
+               default=["Meta-análisis",
+                        "Ensayo clínico",
+                        "Revisión sistemática"])
 
 with col2:
 st.multiselect(
-"Especies preferidas",
-["Humanos", "Ratones", "Ratas", "Primates no humanos", "Células in vitro"],
-default=["Humanos"]
+    "Especies preferidas",
+    ["Humanos", "Ratones", "Ratas", "Primates no humanos", "Células in vitro"],
+    default=["Humanos"]
 )
 
 # Opciones de AI
 st.markdown("##### Configuración de análisis por IA")
 
 nivel_analisis = st.select_slider(
-"Nivel de análisis automático",
-options=["Básico", "Estándar", "Profundo", "Experto"],
-value="Estándar"
+    "Nivel de análisis automático",
+    options=["Básico", "Estándar", "Profundo", "Experto"],
+    value="Estándar"
 )
 
 st.checkbox("Generar resúmenes automáticamente", value=True)
@@ -1604,11 +1762,16 @@ st.text_input("Email", value="usuario@ejemplo.com")
 st.text_input("Institución", value="Hospital Universitario")
 
 with col2:
-st.selectbox("Especialidad", ["Endocrinología", "Cardiología", "Oncología", "Neurología", "Medicina interna"])
+st.selectbox("Especialidad",
+             ["Endocrinología",
+              "Cardiología",
+              "Oncología",
+              "Neurología",
+              "Medicina interna"])
 st.multiselect(
-"Áreas de interés",
-["Diabetes", "Obesidad", "Enfermedades cardiovasculares", "Trastornos tiroideos"],
-default=["Diabetes", "Obesidad"]
+    "Áreas de interés",
+    ["Diabetes", "Obesidad", "Enfermedades cardiovasculares", "Trastornos tiroideos"],
+    default=["Diabetes", "Obesidad"]
 )
 
 # Plan de suscripción
@@ -1664,7 +1827,8 @@ st.checkbox("Notion", value=True)
 st.markdown("##### Peligro")
 
 with st.expander("⚠️ Eliminar cuenta"):
-st.warning("Esta acción eliminará permanentemente su cuenta y todos los datos asociados.")
+st.warning(
+    "Esta acción eliminará permanentemente su cuenta y todos los datos asociados.")
 st.text_input("Escriba 'ELIMINAR' para confirmar")
 st.button("🗑️ Eliminar cuenta permanentemente")
 
