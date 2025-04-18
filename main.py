@@ -31,47 +31,59 @@ st.set_page_config(
 st.markdown("""
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-
+  
   /* Fondo y texto global */
   .main, .stApp {
     background-color: #121212 !important;
     color: #ECEFF1 !important;
     font-family: 'Orbitron', sans-serif !important;
   }
-
+  
   /* Cabeceras neón */
   h1, h2, h3 {
     color: #00FFD1 !important;
     letter-spacing: 1px;
     font-weight: 700;
+    text-shadow: 0 0 10px rgba(0,255,209,0.3);
   }
-
+  
   /* Textos secundarios */
   p, span, li, .stText {
     color: #B0BEC5 !important;
   }
-
+  
   /* Tarjetas de dashboard */
   .dashboard-card {
     background-color: #1E1E1E !important;
     border: 1px solid #00FFD1 !important;
+    border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0,255,209,0.2) !important;
     padding: 20px !important;
     margin-bottom: 20px !important;
+    transition: transform 0.3s ease;
   }
-
+  
+  .dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,255,209,0.3) !important;
+  }
+  
   /* Botones principales */
   .stButton>button {
     background-color: #00FFD1 !important;
     color: #121212 !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
-    transition: background-color 0.2s ease !important;
+    border-radius: 4px !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
   }
+  
   .stButton>button:hover {
     background-color: #00BFA5 !important;
+    box-shadow: 0 0 10px rgba(0,255,209,0.4) !important;
   }
-
+  
   /* Inputs, selects y sliders */
   .stTextInput>div>input,
   .stSelectbox>div>div,
@@ -79,11 +91,28 @@ st.markdown("""
     background-color: #1E1E1E !important;
     color: #ECEFF1 !important;
     border: 1px solid #333 !important;
+    border-radius: 4px;
   }
-
+  
+  .stTextInput>div>input:focus,
+  .stSelectbox>div>div:focus {
+    border-color: #00FFD1 !important;
+    box-shadow: 0 0 0 2px rgba(0,255,209,0.2) !important;
+  }
+  
+  /* Sidebar personalizada */
+  .css-1d391kg, .css-12oz5g7 {
+    background-color: #171717 !important;
+  }
+  
   /* Ocultar footer predeterminado */
   footer {
     visibility: hidden !important;
+  }
+  
+  /* Animaciones suaves */
+  .main * {
+    transition: color 0.2s, background-color 0.2s;
   }
 </style>
 """, unsafe_allow_html=True)
@@ -96,7 +125,7 @@ def load_lottieurl(url: str):
         if r.status_code != 200:
             return None
         return r.json()
-    except BaseException:
+    except Exception:
         return None
 
 # ------------------------------
