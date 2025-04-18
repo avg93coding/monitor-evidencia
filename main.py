@@ -35,96 +35,58 @@ def load_lottieurl(url: str):
     except BaseException:
         return None
 
-# Cargar estilos CSS mejorados
-estilos_path = "assets/estilos.css"
-if os.path.exists(estilos_path):
-    with open(estilos_path) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-else:
-    st.markdown("""
-    <style>
-    .main {
-        background-color: #f8f9fa;
-    }
-    .stApp {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    .dashboard-card {
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-    .highlight-text {
-        color: #1E88E5;
-        font-weight: 600;
-    }
-    .sidebar .sidebar-content {
-        background-image: linear-gradient(#2c3e50, #1a252f);
-        color: white;
-    }
-    h1, h2, h3 {
-        color: #2c3e50;
-    }
-    .stButton>button {
-        background-color: #1E88E5;
-        color: white;
-        border-radius: 5px;
-        padding: 0.5rem 1rem;
-        font-weight: 500;
-    }
-    .stButton>button:hover {
-        background-color: #1565C0;
-    }
-    .search-result {
-        border-left: 4px solid #1E88E5;
-        padding-left: 10px;
-    }
-    footer {
-        visibility: hidden;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
 # ------------------------------
-# ESTILOS FUTURISTAS ADICIONALES
+# ESTILOS FUTURISTAS REVISADOS
 st.markdown("""
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-  body, .stApp, .stText, .stMarkdown, .stButton>button {
+
+  /* Fondo general */
+  .main, .stApp {
+    background-color: #121212 !important;
+    color: #ECEFF1 !important;
     font-family: 'Orbitron', sans-serif;
   }
-  h1, h2, h3, h4, h5, h6 {
-    letter-spacing: 1px;
-  }
+
+  /* Cabeceras */
   h1, h2, h3 {
-    color: #00e5ff;
+    color: #00FFD1 !important;
+    letter-spacing: 1px;
     font-weight: 700;
   }
-  p, span, li {
-    color: #cfd8dc;
+
+  /* Textos secundarios */
+  p, span, li, .stText {
+    color: #B0BEC5 !important;
   }
-  .main {
-    background-color: #10151a;
-  }
-  .stApp {
-    color: #eceff1;
-  }
+
+  /* Tarjetas de dashboard */
   .dashboard-card {
-    background-color: #1e272e;
-    box-shadow: 0 4px 12px rgba(0,255,255,0.2);
+    background-color: #1E1E1E !important;
+    box-shadow: 0 4px 12px rgba(0, 255, 209, 0.2) !important;
+    border: 1px solid #00FFD1 !important;
   }
+
+  /* Botones */
   .stButton>button {
-    background-color: #00e5ff;
-    color: #10151a;
+    background-color: #00FFD1 !important;
+    color: #121212 !important;
     font-weight: 700;
     text-transform: uppercase;
+    transition: background-color 0.2s ease;
   }
   .stButton>button:hover {
-    background-color: #00b8d4;
+    background-color: #00BFA5 !important;
   }
+
+  /* Inputs, selects y sliders */
+  .stTextInput>div>input, .stSelectBox>div>div, .stSlider>div {
+    background-color: #1E1E1E !important;
+    color: #ECEFF1 !important;
+    border: 1px solid #333 !important;
+  }
+
+  /* Ocultar footer predeterminado */
   footer {
     visibility: hidden;
   }
