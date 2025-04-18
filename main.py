@@ -298,7 +298,8 @@ elif "🔍 Búsqueda Científica" in menu:
         query = st.text_input(
             "🔎 Escriba su término de búsqueda",
             value="semaglutide",
-            placeholder="Ej: semaglutide in obesity, machine learning diagnostics...")
+            placeholder="Ej: semaglutide in obesity, machine learning diagnostics..."
+        )
 
     with col2:
         max_resultados = st.slider("Resultados por fuente", 5, 50, 10)
@@ -308,19 +309,26 @@ elif "🔍 Búsqueda Científica" in menu:
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            idioma = st.selectbox("Idioma", ["Todos", "Inglés", "Español", "Francés", "Alemán"])
-            ordenar_por = st.selectbox("Ordenar por", ["Relevancia", "Fecha (reciente)", "Fecha (antigua)", "Factor de impacto"])
+            idioma = st.selectbox(
+                "Idioma", ["Todos", "Inglés", "Español", "Francés", "Alemán"]
+            )
+            ordenar_por = st.selectbox(
+                "Ordenar por", ["Relevancia", "Fecha (reciente)", "Fecha (antigua)", "Factor de impacto"]
+            )
 
         with col2:
-            tipo_documento = st.multiselect("Tipo de documento",
-                                            ["Todos", "Artículo original", "Revisión", "Metaanálisis", "Ensayo clínico", "Guía clínica"],
-                                            default=["Todos"])
+            tipo_documento = st.multiselect(
+                "Tipo de documento",
+                ["Todos", "Artículo original", "Revisión", "Metaanálisis", "Ensayo clínico", "Guía clínica"],
+                default=["Todos"]
+            )
             años = st.slider("Rango de años", 2000, 2025, (2020, 2025))
 
         with col3:
             solo_humanos = st.checkbox("Solo estudios en humanos", value=True)
             solo_abiertos = st.checkbox("Solo acceso abierto", value=False)
             incluir_preprints = st.checkbox("Incluir preprints", value=True)
+
 
 
 # Botón de búsqueda principal
