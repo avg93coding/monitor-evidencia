@@ -39,8 +39,9 @@ def load_lottieurl(url: str):
 # Cargar estilos CSS mejorados
 estilos_path = "assets/estilos.css"
 if os.path.exists(estilos_path):
-with open(estilos_path) as f:
-st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    with open(estilos_path) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
 else:
 # CSS por defecto si no existe el archivo
 st.markdown("""
