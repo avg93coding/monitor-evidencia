@@ -214,30 +214,30 @@ elif "🔍 Búsqueda Científica" in menu:
     st.title("🔍 Búsqueda Científica Inteligente")
 
     # Introducción a la herramienta
-    st.markdown("""
-    <div style='background-color:#f0f7ff; padding:15px; border-radius:5px; margin-bottom:20px;'>
-        <h4 style='margin-top:0'>Búsqueda unificada en las principales bases de datos científicas</h4>
-        <p>Nuestra tecnología permite búsquedas simultáneas en PubMed, Europe PMC y otras fuentes científicas con análisis de IA integrado.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div style='background-color:#f0f7ff; padding:15px; border-radius:5px; margin-bottom:20px;'>
+            <h4 style='margin-top:0'>Búsqueda unificada en las principales bases de datos científicas</h4>
+            <p>Nuestra tecnología permite búsquedas simultáneas en PubMed, Europe PMC y otras fuentes científicas con análisis de IA integrado.</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     # Formulario de búsqueda mejorado
     col1, col2 = st.columns([3, 1])
-
     with col1:
         query = st.text_input(
             "🔎 Escriba su término de búsqueda",
             value="semaglutide",
             placeholder="Ej: semaglutide in obesity, machine learning diagnostics..."
         )
-
     with col2:
         max_resultados = st.slider("Resultados por fuente", 5, 50, 10)
 
     # Opciones avanzadas
     with st.expander("Opciones avanzadas de búsqueda"):
         col1, col2, col3 = st.columns(3)
-
         with col1:
             idioma = st.selectbox(
                 "Idioma", ["Todos", "Inglés", "Español", "Francés", "Alemán"]
@@ -245,7 +245,6 @@ elif "🔍 Búsqueda Científica" in menu:
             ordenar_por = st.selectbox(
                 "Ordenar por", ["Relevancia", "Fecha (reciente)", "Fecha (antigua)", "Factor de impacto"]
             )
-
         with col2:
             tipo_documento = st.multiselect(
                 "Tipo de documento",
@@ -253,215 +252,142 @@ elif "🔍 Búsqueda Científica" in menu:
                 default=["Todos"]
             )
             años = st.slider("Rango de años", 2000, 2025, (2020, 2025))
-
         with col3:
             solo_humanos = st.checkbox("Solo estudios en humanos", value=True)
             solo_abiertos = st.checkbox("Solo acceso abierto", value=False)
             incluir_preprints = st.checkbox("Incluir preprints", value=True)
 
+    # Botón de búsqueda principal
+    if st.button("Buscar evidencia científica", use_container_width=True):
+        # Progress bar
+        progress_container = st.empty()
+        progress_bar = progress_container.progress(0)
+        for i in range(101):
+            time.sleep(0.01)
+            progress_bar.progress(i)
+        progress_container.empty()
 
+        st.success(f"Se encontraron 87 resultados para '{query}' en todas las fuentes")
 
-        # Botón de búsqueda principal
-if st.button("Buscar evidencia científica", use_container_width=True):
-    # Contenedor para mostrar el progreso de la búsqueda
-    progress_container = st.empty()
-    progress_bar = progress_container.progress(0)
-    for i in range(101):
-        time.sleep(0.01)  # Simular carga
-        progress_bar.progress(i)
-    progress_container.empty()
+        tab1, tab2, tab3, tab4 = st.tabs(
+            ["📑 Todos los resultados", "📊 PubMed", "🌍 Europe PMC", "💡 Análisis de IA"]
+        )
 
-    # Información sobre los resultados
-    st.success(f"Se encontraron 87 resultados para '{query}' en todas las fuentes")
+        # Todos los resultados
+        with tab1:
+            for i in range(1, 6):
+                with st.expander(f"Efficacy and safety of semaglutide in type 2 diabetes patients - Phase {i} clinical trial"):
+                    c1, c2 = st.columns([4, 1])
+                    with c1:
+                        st.markdown(f"""
+                        **Autores:** Jensen AB, Smith JR, Anderson P, et al.
 
-    # Pestañas para organizar los resultados
-    tab1, tab2, tab3, tab4 = st.tabs(
-        ["📑 Todos los resultados", "📊 PubMed", "🌍 Europe PMC", "💡 Análisis de IA"]
-    )
+                        **Publicado en:** New England Journal of Medicine • {2025 - i} • Factor de impacto: {round(10.5 - i * 0.5, 1)}
 
-    # Pestaña 1: Todos los resultados
-    with tab1:
-        # Simulación de resultados combinados
-        for i in range(1, 6):
-            with st.expander(f"Efficacy and safety of semaglutide in type 2 diabetes patients - Phase {i} clinical trial"):
-                col1, col2 = st.columns([4, 1])
-                with col1:
-                    st.markdown(f"""
-                    **Autores:** Jensen AB, Smith JR, Anderson P, et al.
+                        **Resumen:** This randomized clinical trial evaluated the efficacy and safety of semaglutide in patients with type 2 diabetes over a 52-week period. The study demonstrated significant improvements in glycemic control and weight reduction compared to placebo, with a favorable safety profile.
 
-                    **Publicado en:** New England Journal of Medicine • {2025 - i} • Factor de impacto: {round(10.5 - i * 0.5, 1)}
+                        **Conclusiones clave:** Semaglutide mostró reducciones dependientes de dosis en HbA1c y peso corporal con tolerabilidad aceptable.
+                        """)
+                        st.markdown("""
+                        <div style='display:flex; gap:5px'>
+                            <span style='background-color:#e1f5fe; color:#0277bd; padding:3px 8px; border-radius:15px; font-size:12px'>Diabetes</span>
+                            <span style='background-color:#e1f5fe; color:#0277bd; padding:3px 8px; border-radius:15px; font-size:12px'>Semaglutide</span>
+                            <span style='background-color:#e1f5fe; color:#0277bd; padding:3px 8px; border-radius:15px; font-size:12px'>Clinical Trial</span>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    with c2:
+                        st.markdown(f"""
+                        **PMID:** 3652891{i}
 
-                    **Resumen:** This randomized clinical trial evaluated the efficacy and safety of semaglutide in patients with type 2 diabetes over a 52-week period. The study demonstrated significant improvements in glycemic control and weight reduction compared to placebo, with a favorable safety profile.
+                        **Citado:** {120 - i * 15} veces
 
-                    **Conclusiones clave:** Semaglutide showed dose-dependent reductions in HbA1c and body weight with acceptable tolerability.
-                    """)
-                    st.markdown("""
-                    <div style='display:flex; gap:5px'>
-                        <span style='background-color:#e1f5fe; color:#0277bd; padding:3px 8px; border-radius:15px; font-size:12px'>Diabetes</span>
-                        <span style='background-color:#e1f5fe; color:#0277bd; padding:3px 8px; border-radius:15px; font-size:12px'>Semaglutide</span>
-                        <span style='background-color:#e1f5fe; color:#0277bd; padding:3px 8px; border-radius:15px; font-size:12px'>Clinical Trial</span>
-                    </div>
-                    """, unsafe_allow_html=True)
+                        **Acceso:** {'Abierto ✓' if i % 2 == 0 else 'Restringido'}
+                        """)
+                        st.download_button(
+                            label="PDF",
+                            data=b"sample",
+                            file_name=f"semaglutide_study_{i}.pdf",
+                            mime="application/pdf"
+                        )
 
-                with col2:
-                    st.markdown(f"""
-                    **PMID:** 3652891{i}
+        # PubMed
+        with tab2:
+            if query:
+                with st.spinner("Consultando PubMed..."):
+                    resultados_pubmed = buscar_pubmed(query, max_resultados)
+                if resultados_pubmed:
+                    for r in resultados_pubmed:
+                        with st.expander(r["Título"]):
+                            c1, c2 = st.columns([3, 1])
+                            with c1:
+                                st.markdown(f"**Autores:** {r['Autores']}")
+                                st.markdown(f"**Fuente:** {r['Fuente']}")
+                                st.markdown(f"**Resumen original:**\n\n{r['Resumen']}")
+                            with c2:
+                                st.markdown(f"**PMID:** {r['PMID']}")
+                                st.button("⭐ Guardar", key=f"save_pubmed_{r['PMID']}")
+                                st.button("📤 Exportar", key=f"export_pubmed_{r['PMID']}")
+                            st.markdown("**🧠 Análisis de IA:**")
+                            with st.spinner("Analizando contenido..."):
+                                resumen_ia = resumir_texto(r["Resumen"])
+                                st.info(resumen_ia)
+                else:
+                    st.warning("No se encontraron resultados en PubMed.")
 
-                    **Citado:** {120 - i * 15} veces
+        # Europe PMC
+        with tab3:
+            if query:
+                with st.spinner("Consultando Europe PMC..."):
+                    resultados_epmc = buscar_europe_pmc(query, max_resultados)
+                if resultados_epmc:
+                    for e in resultados_epmc:
+                        with st.expander(e["Título"]):
+                            c1, c2 = st.columns([3, 1])
+                            with c1:
+                                st.markdown(f"**Fuente:** {e['Fuente']}")
+                                st.markdown(f"**Tipo de publicación:** {e['Tipo']}")
+                                st.markdown(f"**Enlace:** [Ver artículo completo]({e['Enlace']})")
+                            with c2:
+                                st.markdown(f"**ID:** {e['ID']}")
+                                st.button("⭐ Guardar", key=f"save_epmc_{e['ID']}")
+                                st.button("📤 Exportar", key=f"export_epmc_{e['ID']}")
+                else:
+                    st.warning("No se encontraron resultados en Europe PMC.")
 
-                    **Acceso:** {'Abierto ✓' if i % 2 == 0 else 'Restringido'}
-                    """)
-                    st.download_button(
-                        label="PDF",
-                        data=b"sample",
-                        file_name=f"semaglutide_study_{i}.pdf",
-                        mime="application/pdf"
-                    )
-
-    # Pestaña 2: PubMed
-    with tab2:
-        if query:
-            with st.spinner("Consultando PubMed..."):
-                resultados_pubmed = buscar_pubmed(query, max_resultados)
-            if resultados_pubmed:
-                for r in resultados_pubmed:
-                    with st.expander(r["Título"]):
-                        col1, col2 = st.columns([3, 1])
-                        with col1:
-                            st.markdown(f"**Autores:** {r['Autores']}")
-                            st.markdown(f"**Fuente:** {r['Fuente']}")
-                            st.markdown(f"**Resumen original:**\n\n{r['Resumen']}")
-                        with col2:
-                            st.markdown(f"**PMID:** {r['PMID']}")
-                            st.button("⭐ Guardar", key=f"save_pubmed_{r['PMID']}")
-                            st.button("📤 Exportar", key=f"export_pubmed_{r['PMID']}")
-                        st.markdown("**🧠 Análisis de IA:**")
-                        with st.spinner("Analizando contenido..."):
-                            resumen_ia = resumir_texto(r["Resumen"])
-                            st.info(resumen_ia)
-            else:
-                st.warning("No se encontraron resultados en PubMed.")
-
-    # Pestaña 3: Europe PMC
-    with tab3:
-        if query:
-            with st.spinner("Consultando Europe PMC..."):
-                resultados_epmc = buscar_europe_pmc(query, max_resultados)
-            if resultados_epmc:
-                for e in resultados_epmc:
-                    with st.expander(e["Título"]):
-                        col1, col2 = st.columns([3, 1])
-                        with col1:
-                            st.markdown(f"**Fuente:** {e['Fuente']}")
-                            st.markdown(f"**Tipo de publicación:** {e['Tipo']}")
-                            st.markdown(f"**Enlace:** [Ver artículo completo]({e['Enlace']})")
-                        with col2:
-                            st.markdown(f"**ID:** {e['ID']}")
-                            st.button("⭐ Guardar", key=f"save_epmc_{e['ID']}")
-                            st.button("📤 Exportar", key=f"export_epmc_{e['ID']}")
-            else:
-                st.warning("No se encontraron resultados en Europe PMC.")
-
-    # Pestaña 4: Análisis de IA
-    with tab4:
-        st.subheader("🧠 Análisis de tendencias por IA")
-
-
-# Simulación de análisis de IA
-st.markdown("""
-<div style='background-color:#f0f7ff; padding:20px; border-radius:5px; margin-bottom:20px;'>
-<h4 style='margin-top:0'>Insights sobre semaglutide</h4>
-<p>Basado en el análisis de 87 publicaciones recientes, encontramos las siguientes tendencias:</p>
-<ul>
-<li><strong>Efectividad:</strong> El 92% de los estudios reportan efectividad significativa en reducción de peso y control glucémico.</li>
-<li><strong>Poblaciones:</strong> La mayoría de estudios se han realizado en poblaciones de América del Norte y Europa, con creciente interés en diversidad étnica.</li>
-<li><strong>Efectos secundarios:</strong> Los efectos gastrointestinales son los más comunes, con tendencia a disminuir tras las primeras semanas.</li>
-<li><strong>Comparaciones:</strong> Superioridad demostrada frente a otros GLP-1 RA en términos de reducción de HbA1c y peso.</li>
-</ul>
-</div>
-""", unsafe_allow_html=True)
-
-# Gráfico de tendencias
-st.subheader("Evolución de las publicaciones")
-chart_data = pd.DataFrame({
-    'Año': [2020, 2021, 2022, 2023, 2024, 2025],
-    'Publicaciones': [12, 18, 29, 47, 68, 23]
-})
-
-chart = alt.Chart(chart_data).mark_line(point=True).encode(
-    x='Año:O',
-    y='Publicaciones:Q',
-    tooltip=['Año', 'Publicaciones']
-).properties(
-    height=300
-).interactive()
-
-st.altair_chart(chart, use_container_width=True)
-
-# Temas relacionados
-st.subheader("Conceptos relacionados")
-st.markdown("""
-<div style='display:flex; flex-wrap:wrap; gap:10px'>
-<span style='background-color:#e1f5fe; color:#0277bd; padding:8px 15px; border-radius:20px; font-size:14px'>GLP-1 (95%)</span>
-<span style='background-color:#e1f5fe; color:#0277bd; padding:8px 15px; border-radius:20px; font-size:14px'>Obesidad (87%)</span>
-<span style='background-color:#e1f5fe; color:#0277bd; padding:8px 15px; border-radius:20px; font-size:14px'>Diabetes tipo 2 (85%)</span>
-<span style='background-color:#e1f5fe; color:#0277bd; padding:8px 15px; border-radius:20px; font-size:14px'>Pérdida de peso (78%)</span>
-<span style='background-color:#e1f5fe; color:#0277bd; padding:8px 15px; border-radius:20px; font-size:14px'>Control glucémico (72%)</span>
-<span style='background-color:#e1f5fe; color:#0277bd; padding:8px 15px; border-radius:20px; font-size:14px'>Efectos adversos (65%)</span>
-<span style='background-color:#e1f5fe; color:#0277bd; padding:8px 15px; border-radius:20px; font-size:14px'>Cardiovascular (58%)</span>
-<span style='background-color:#e1f5fe; color:#0277bd; padding:8px 15px; border-radius:20px; font-size:14px'>Liraglutide (52%)</span>
-</div>
-""", unsafe_allow_html=True)
-
-# Fortaleza de la evidencia
-st.subheader("Evaluación de la calidad de evidencia")
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    st.markdown("""
-    <div style='text-align:center'>
-        <h3 style='margin:0; font-size:16px'>Ensayos clínicos</h3>
-        <div style='font-size:24px; color:#2e7d32; font-weight:bold'>A+</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col2:
-    st.markdown("""
-    <div style='text-align:center'>
-        <h3 style='margin:0; font-size:16px'>Meta-análisis</h3>
-        <div style='font-size:24px; color:#2e7d32; font-weight:bold'>A</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col3:
-    st.markdown("""
-    <div style='text-align:center'>
-        <h3 style='margin:0; font-size:16px'>Estudios observacionales</h3>
-        <div style='font-size:24px; color:#f9a825; font-weight:bold'>B+</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col4:
-    st.markdown("""
-    <div style='text-align:center'>
-        <h3 style='margin:0; font-size:16px'>Calidad general</h3>
-        <div style='font-size:24px; color:#2e7d32; font-weight:bold'>A</div>
-    </div>
-    """, unsafe_allow_html=True)
+        # IA
+        with tab4:
+            st.subheader("🧠 Análisis de tendencias por IA")
+            st.markdown(
+                """
+                <div style='background-color:#f0f7ff; padding:20px; border-radius:5px; margin-bottom:20px;'>
+                    <h4 style='margin-top:0'>Insights sobre semaglutide</h4>
+                    <p>Basado en el análisis de 87 publicaciones recientes, encontramos las siguientes tendencias:</p>
+                    <ul>
+                        <li><strong>Efectividad:</strong> El 92% de los estudios reportan efectividad significativa en reducción de peso y control glucémico.</li>
+                        <li><strong>Poblaciones:</strong> Predominio en América del Norte y Europa, con creciente interés en diversidad étnica.</li>
+                        <li><strong>Efectos secundarios:</strong> Gastrointestinales, con tendencia a disminuir tras las primeras semanas.</li>
+                        <li><strong>Comparaciones:</strong> Superioridad frente a otros GLP-1 RA en reducción de HbA1c y peso.</li>
+                    </ul>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 # 3. CLINICAL TRIALS
-elif "Clinical Trials" in menu:
+elif "🧪 Clinical Trials" in menu:
     st.title("🧪 Monitoreo de Ensayos Clínicos")
 
-    # Introducción a la sección
-    st.markdown("""
-    <div style='background-color:#f0f7ff; padding:15px; border-radius:5px; margin-bottom:20px;'>
-        <h4 style='margin-top:0'>Seguimiento en tiempo real de ensayos clínicos globales</h4>
-        <p>Monitoree los ensayos clínicos más relevantes, sus actualizaciones y resultados preliminares en todo el mundo.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div style='background-color:#f0f7ff; padding:15px; border-radius:5px; margin-bottom:20px;'>
+            <h4 style='margin-top:0'>Seguimiento en tiempo real de ensayos clínicos globales</h4>
+            <p>Monitoree los ensayos clínicos más relevantes, sus actualizaciones y resultados preliminares en todo el mundo.</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    # Filtros para ensayos clínicos
+    # Filtros
     col1, col2, col3 = st.columns(3)
     with col1:
         area_terapeutica = st.selectbox(
@@ -481,7 +407,6 @@ elif "Clinical Trials" in menu:
             default=["Reclutando", "Activo, no reclutando"]
         )
 
-    # Búsqueda específica para ensayos
     query_trials = st.text_input(
         "🔎 Buscar ensayos clínicos",
         placeholder="Ej: semaglutide, cáncer de páncreas, hipertensión resistente..."
@@ -490,48 +415,47 @@ elif "Clinical Trials" in menu:
     if st.button("Buscar ensayos clínicos", use_container_width=True):
         st.success("Se encontraron 42 ensayos clínicos que coinciden con sus criterios")
 
-        # Resultados simulados de ensayos clínicos
         for i in range(1, 6):
             with st.expander(f"SEMAGOLD-{i}: Evaluación de semaglutide oral en pacientes con DMT2 y enfermedad cardiovascular"):
                 c1, c2 = st.columns([3, 1])
                 with c1:
                     st.markdown(f"""
-**ID:** NCT0{random.randint(1000000, 9999999)}
+                    **ID:** NCT0{random.randint(1000000, 9999999)}
 
-**Patrocinador:** {'Industria Farmacéutica' if i % 2 == 0 else 'Centro Médico Universitario'}
+                    **Patrocinador:** {'Industria Farmacéutica' if i % 2 == 0 else 'Centro Médico Universitario'}
 
-**Fase:** {random.choice(['II', 'III', 'IV'])}
+                    **Fase:** {random.choice(['II', 'III', 'IV'])}
 
-**Estado:** {random.choice(['Reclutando', 'Activo, no reclutando'])}
+                    **Estado:** {random.choice(['Reclutando', 'Activo, no reclutando'])}
 
-**Sitios activos:** {random.randint(10, 50)} en {random.randint(3, 15)} países
+                    **Sitios activos:** {random.randint(10, 50)} en {random.randint(3, 15)} países
 
-**Intervención principal:** Semaglutide oral {random.choice(['10mg', '15mg', '20mg'])} una vez al día vs placebo
+                    **Intervención principal:** Semaglutide oral {random.choice(['10mg', '15mg', '20mg'])} una vez al día vs placebo
 
-**Actualización reciente:** {random.choice(['Resultados preliminares', 'Cambio en criterios de inclusión', 'Nuevo sitio de estudio', 'Reporte de seguridad'])}
+                    **Actualización reciente:** {random.choice(['Resultados preliminares', 'Cambio en criterios de inclusión', 'Nuevo sitio de estudio', 'Reporte de seguridad'])}
                     """)
                 with c2:
                     st.markdown(f"""
-**Participantes:** {random.randint(1000, 5000)}
+                    **Participantes:** {random.randint(1000, 5000)}
 
-**Fecha inicio:** {random.choice(['Ene', 'Feb', 'Mar', 'Abr'])} 202{random.randint(3, 5)}
+                    **Fecha inicio:** {random.choice(['Ene', 'Feb', 'Mar', 'Abr'])} 202{random.randint(3, 5)}
 
-**Fecha estimada conclusión:** {random.choice(['Jun', 'Jul', 'Ago', 'Sep', 'Oct'])} 202{random.randint(5, 7)}
+                    **Fecha estimada conclusión:** {random.choice(['Jun', 'Jul', 'Ago', 'Sep', 'Oct'])} 202{random.randint(5, 7)}
                     """)
                     st.button("📌 Seguir", key=f"follow_trial_{i}")
                     st.button("📑 Protocolo", key=f"protocol_trial_{i}")
 
-                # Criterios de inclusión
                 st.markdown("##### Criterios de inclusión principales:")
-                st.markdown("""
-- Pacientes adultos (>18 años)
-- Diabetes mellitus tipo 2 diagnosticada
-- HbA1c entre 7.0% y 10.5%
-- Enfermedad cardiovascular aterosclerótica establecida
-- IMC ≥25 kg/m²
-                """)
+                st.markdown(
+                    """
+                    - Pacientes adultos (>18 años)
+                    - Diabetes mellitus tipo 2 diagnosticada
+                    - HbA1c entre 7.0% y 10.5%
+                    - Enfermedad cardiovascular aterosclerótica establecida
+                    - IMC ≥25 kg/m²
+                    """
+                )
 
-                # Mapa de sitios de estudio
                 st.markdown("##### Distribución de sitios de estudio:")
                 trial_sites = pd.DataFrame({
                     'lat': [random.uniform(25, 60) for _ in range(15)],
@@ -541,7 +465,6 @@ elif "Clinical Trials" in menu:
                 })
                 st.map(trial_sites)
 
-        # Línea de tiempo del ensayo
         st.markdown("##### Línea de tiempo del ensayo:")
         timeline_chart = alt.Chart(pd.DataFrame({
             'Fase': ['Diseño', 'Inicio', 'Reclutamiento', 'Tratamiento', 'Análisis', 'Resultados'],
@@ -549,9 +472,7 @@ elif "Clinical Trials" in menu:
             'Fin':    [3, 6, 18, 24, 30, 36],
             'Estado': ['Completado', 'Completado', 'En progreso', 'Planificado', 'Planificado', 'Planificado']
         })).mark_bar().encode(
-            x='Inicio',
-            x2='Fin',
-            y='Fase',
+            x='Inicio', x2='Fin', y='Fase',
             color=alt.Color('Estado', scale=alt.Scale(
                 domain=['Completado','En progreso','Planificado'],
                 range=['#2ecc71','#3498db','#95a5a6']
@@ -559,7 +480,6 @@ elif "Clinical Trials" in menu:
         ).properties(height=200)
         st.altair_chart(timeline_chart, use_container_width=True)
 
-        # Resultados preliminares
         st.markdown("##### Resultados preliminares disponibles:")
         results_data = pd.DataFrame({
             'Grupo': ['Semaglutide','Placebo'],
