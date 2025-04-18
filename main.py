@@ -27,82 +27,187 @@ st.set_page_config(
 )
 
 # ------------------------------
-# 2) Bloque de ESTILOS FUTURISTAS
+# 2) Bloque de ESTILOS FUTURISTAS CON MEJOR LEGIBILIDAD
 st.markdown("""
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&display=swap');
   
   /* Fondo y texto global */
   .main, .stApp {
-    background-color: #121212 !important;
-    color: #ECEFF1 !important;
-    font-family: 'Orbitron', sans-serif !important;
+    background-color: #0F1C2D !important;
+    color: #E0F2FF !important;
+    font-family: 'Exo 2', sans-serif !important;
   }
   
-  /* Cabeceras neón */
-  h1, h2, h3 {
-    color: #00FFD1 !important;
+  /* Cabeceras con mejor contraste */
+  h1 {
+    color: #4DFFF3 !important;
+    font-weight: 700 !important;
     letter-spacing: 1px;
-    font-weight: 700;
-    text-shadow: 0 0 10px rgba(0,255,209,0.3);
+    text-shadow: 0 0 8px rgba(77, 255, 243, 0.4);
+    margin-bottom: 1rem !important;
   }
   
-  /* Textos secundarios */
-  p, span, li, .stText {
-    color: #B0BEC5 !important;
+  h2, h3 {
+    color: #48E5FF !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px;
+    margin-top: 1rem !important;
+  }
+  
+  /* Textos secundarios con mejor legibilidad */
+  p, span, li, .stText, label, .stMarkdown, div:not(.dashboard-card) {
+    color: #D8E8FF !important;
+    font-size: 1.05rem !important;
   }
   
   /* Tarjetas de dashboard */
   .dashboard-card {
-    background-color: #1E1E1E !important;
-    border: 1px solid #00FFD1 !important;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,255,209,0.2) !important;
+    background-color: #172A45 !important;
+    border: 1px solid #48E5FF !important;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(72, 229, 255, 0.2) !important;
     padding: 20px !important;
     margin-bottom: 20px !important;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   
   .dashboard-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0,255,209,0.3) !important;
+    box-shadow: 0 6px 15px rgba(72, 229, 255, 0.3) !important;
   }
   
-  /* Botones principales */
+  /* Botones principales con alto contraste */
   .stButton>button {
-    background-color: #00FFD1 !important;
-    color: #121212 !important;
+    background-color: #0BD9D2 !important;
+    color: #052138 !important; /* Texto oscuro sobre fondo claro */
     font-weight: 700 !important;
     text-transform: uppercase !important;
-    border-radius: 4px !important;
+    border-radius: 6px !important;
     transition: all 0.2s ease !important;
     border: none !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.95rem !important;
+    letter-spacing: 0.5px !important;
   }
   
   .stButton>button:hover {
-    background-color: #00BFA5 !important;
-    box-shadow: 0 0 10px rgba(0,255,209,0.4) !important;
+    background-color: #48E5FF !important;
+    box-shadow: 0 0 10px rgba(72, 229, 255, 0.5) !important;
   }
   
-  /* Inputs, selects y sliders */
+  /* Inputs, selects y sliders con mejor contraste */
   .stTextInput>div>input,
   .stSelectbox>div>div,
-  .stSlider>div {
-    background-color: #1E1E1E !important;
-    color: #ECEFF1 !important;
-    border: 1px solid #333 !important;
-    border-radius: 4px;
+  .stMultiselect>div>div>div {
+    background-color: #213855 !important;
+    color: #FFFFFF !important; /* Máximo contraste */
+    border: 1px solid #48E5FF !important;
+    border-radius: 6px;
+    font-size: 1rem !important;
   }
   
-  .stTextInput>div>input:focus,
-  .stSelectbox>div>div:focus {
-    border-color: #00FFD1 !important;
-    box-shadow: 0 0 0 2px rgba(0,255,209,0.2) !important;
+  /* Opciones del selectbox */
+  .stSelectbox div[data-baseweb="select"] div[role="listbox"] {
+    background-color: #213855 !important;
+  }
+  
+  .stSelectbox div[data-baseweb="select"] div[role="option"] {
+    color: #FFFFFF !important;
+  }
+  
+  /* Slider con colores visibles */
+  .stSlider>div {
+    background-color: #213855 !important;
+  }
+  
+  .stSlider>div>div>div {
+    background-color: #48E5FF !important;
+  }
+  
+  /* Widgets de fecha */
+  .stDateInput>div>div>div {
+    background-color: #213855 !important;
+    color: #FFFFFF !important;
+    border: 1px solid #48E5FF !important;
   }
   
   /* Sidebar personalizada */
-  .css-1d391kg, .css-12oz5g7 {
-    background-color: #171717 !important;
+  .css-1d391kg, .css-12oz5g7, [data-testid="stSidebar"] {
+    background-color: #0D1B2A !important;
+    border-right: 1px solid #48E5FF !important;
+  }
+  
+  /* Tabs con mejor visibilidad */
+  .stTabs [data-baseweb="tab-list"] {
+    background-color: #172A45 !important;
+    border-radius: 8px !important;
+  }
+  
+  .stTabs [data-baseweb="tab"] {
+    color: #D8E8FF !important;
+    font-weight: 600 !important;
+  }
+  
+  .stTabs [aria-selected="true"] {
+    color: #48E5FF !important;
+    border-bottom-color: #48E5FF !important;
+  }
+  
+  /* Metrics con mejor contraste */
+  .stMetric {
+    background-color: #213855 !important;
+    padding: 10px !important;
+    border-radius: 6px !important;
+  }
+  
+  .stMetric label {
+    color: #48E5FF !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+  }
+  
+  .stMetric .metric-value {
+    color: #FFFFFF !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+  }
+  
+  /* Expanders con mejor visibilidad */
+  .streamlit-expanderHeader {
+    color: #48E5FF !important;
+    font-weight: 600 !important;
+    background-color: #172A45 !important;
+    border-radius: 6px !important;
+  }
+  
+  /* Alertas y notificaciones */
+  .stAlert {
+    background-color: #213855 !important;
+    color: #D8E8FF !important;
+    border-color: #48E5FF !important;
+  }
+  
+  /* Code blocks */
+  code {
+    background-color: #213855 !important;
+    color: #48E5FF !important;
+    border-radius: 4px !important;
+    padding: 2px 5px !important;
+  }
+  
+  /* Dataframes y tablas */
+  .stDataFrame, .stTable {
+    background-color: #172A45 !important;
+  }
+  
+  .stDataFrame th, .stTable th {
+    background-color: #213855 !important;
+    color: #48E5FF !important;
+  }
+  
+  .stDataFrame td, .stTable td {
+    color: #D8E8FF !important;
   }
   
   /* Ocultar footer predeterminado */
@@ -110,9 +215,16 @@ st.markdown("""
     visibility: hidden !important;
   }
   
-  /* Animaciones suaves */
-  .main * {
-    transition: color 0.2s, background-color 0.2s;
+  /* Estilos para checkbox */
+  [data-testid="stCheckbox"] label {
+    color: #D8E8FF !important;
+  }
+  
+  /* Mejoras para gráficos */
+  .stChart > div > div {
+    background-color: #172A45 !important;
+    border-radius: 8px !important;
+    padding: 10px !important;
   }
 </style>
 """, unsafe_allow_html=True)
@@ -132,8 +244,6 @@ def load_lottieurl(url: str):
 # 4) Resto de tu aplicación (sidebar, dashboards, búsquedas, clinical trials, análisis, configuración...)
 #    Copia aquí todo el código que ya tenías tras este punto, sin modificarlo,
 #    de modo que Streamlit cargue primero los estilos y luego pinte tus componentes.
-
-
 # ----- SIDEBAR -----
 # Mostrar logo si existe
 logo_path = "assets/logo.png"
