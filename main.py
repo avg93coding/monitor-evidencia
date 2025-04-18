@@ -450,57 +450,52 @@ with col4:
     """, unsafe_allow_html=True)
 
 # 3. CLINICAL TRIALS
-elif "🧪 Clinical Trials" in menu:
+elif menu == "🧪 Clinical Trials":
     st.title("🧪 Monitoreo de Ensayos Clínicos")
 
-# Introducción a la sección
-st.markdown("""
-<div style='background-color:#f0f7ff; padding:15px; border-radius:5px; margin-bottom:20px;'>
-<h4 style='margin-top:0'>Seguimiento en tiempo real de ensayos clínicos globales</h4>
-<p>Monitoree los ensayos clínicos más relevantes, sus actualizaciones y resultados preliminares en todo el mundo.</p>
-</div>
-""", unsafe_allow_html=True)
+    # Introducción a la sección
+    st.markdown("""
+    <div style='background-color:#f0f7ff; padding:15px; border-radius:5px; margin-bottom:20px;'>
+        <h4 style='margin-top:0'>Seguimiento en tiempo real de ensayos clínicos globales</h4>
+        <p>Monitoree los ensayos clínicos más relevantes, sus actualizaciones y resultados preliminares en todo el mundo.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-# Filtros para ensayos clínicos
-col1, col2, col3 = st.columns(3)
+    # Filtros para ensayos clínicos
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        area_terapeutica = st.selectbox(
+            "Área terapéutica",
+            ["Todas", "Oncología", "Cardiología", "Endocrinología", "Neurología", "Inmunología", "Enfermedades raras"]
+        )
+    with col2:
+        fase_ensayo = st.multiselect(
+            "Fase del ensayo",
+            ["I", "II", "III", "IV"],
+            default=["III", "IV"]
+        )
+    with col3:
+        estado_ensayo = st.multiselect(
+            "Estado",
+            ["Reclutando", "Activo, no reclutando", "Completado", "No iniciado"],
+            default=["Reclutando", "Activo, no reclutando"]
+        )
 
-with col1:
-    area_terapeutica = st.selectbox(
-        "Área terapéutica",
-        ["Todas", "Oncología", "Cardiología", "Endocrinología", "Neurología", "Inmunología", "Enfermedades raras"]
+    # Búsqueda específica para ensayos
+    query_trials = st.text_input(
+        "🔎 Buscar ensayos clínicos",
+        placeholder="Ej: semaglutide, cáncer de páncreas, hipertensión resistente..."
     )
 
-with col2:
-    fase_ensayo = st.multiselect(
-        "Fase del ensayo",
-        ["I", "II", "III", "IV"],
-        default=["III", "IV"]
-    )
+    if st.button("Buscar ensayos clínicos", use_container_width=True):
+        st.success("Se encontraron 42 ensayos clínicos que coinciden con sus criterios")
 
-with col3:
-    estado_ensayo = st.multiselect(
-        "Estado",
-        ["Reclutando", "Activo, no reclutando", "Completado", "No iniciado"],
-        default=["Reclutando", "Activo, no reclutando"]
-    )
-
-# Búsqueda específica para ensayos
-query_trials = st.text_input(
-    "🔎 Buscar ensayos clínicos",
-    value="",
-    placeholder="Ej: semaglutide, cáncer de páncreas, hipertensión resistente..."
-)
-
-if st.button("Buscar ensayos clínicos", use_container_width=True):
-    st.success("Se encontraron 42 ensayos clínicos que coinciden con sus criterios")
-
-    # Resultados simulados de ensayos clínicos
-    for i in range(1, 6):
-        with st.expander(f"SEMAGOLD-{i}: Evaluación de semaglutide oral en pacientes con DMT2 y enfermedad cardiovascular"):
-            col1, col2 = st.columns([3, 1])
-
-            with col1:
-                st.markdown(f"""
+        # Resultados simulados de ensayos clínicos
+        for i in range(1, 6):
+            with st.expander(f"SEMAGOLD-{i}: Evaluación de semaglutide oral en pacientes con DMT2 y enfermedad cardiovascular"):
+                c1, c2 = st.columns([3, 1])
+                with c1:
+                    st.markdown(f"""
 **ID:** NCT0{random.randint(1000000, 9999999)}
 
 **Patrocinador:** {'Industria Farmacéutica' if i % 2 == 0 else 'Centro Médico Universitario'}
@@ -514,82 +509,66 @@ if st.button("Buscar ensayos clínicos", use_container_width=True):
 **Intervención principal:** Semaglutide oral {random.choice(['10mg', '15mg', '20mg'])} una vez al día vs placebo
 
 **Actualización reciente:** {random.choice(['Resultados preliminares', 'Cambio en criterios de inclusión', 'Nuevo sitio de estudio', 'Reporte de seguridad'])}
-""")
-
-            with col2:
-                st.markdown(f"""
+                    """)
+                with c2:
+                    st.markdown(f"""
 **Participantes:** {random.randint(1000, 5000)}
 
 **Fecha inicio:** {random.choice(['Ene', 'Feb', 'Mar', 'Abr'])} 202{random.randint(3, 5)}
 
 **Fecha estimada conclusión:** {random.choice(['Jun', 'Jul', 'Ago', 'Sep', 'Oct'])} 202{random.randint(5, 7)}
-""")
+                    """)
+                    st.button("📌 Seguir", key=f"follow_trial_{i}")
+                    st.button("📑 Protocolo", key=f"protocol_trial_{i}")
 
-            # Botones de acción
-            st.button("📌 Seguir", key=f"follow_trial_{i}")
-            st.button("📑 Protocolo", key=f"protocol_trial_{i}")
-
-            # Mostrar criterios
-            st.markdown("##### Criterios de inclusión principales:")
-            st.markdown("""
+                # Criterios de inclusión
+                st.markdown("##### Criterios de inclusión principales:")
+                st.markdown("""
 - Pacientes adultos (>18 años)
 - Diabetes mellitus tipo 2 diagnosticada
 - HbA1c entre 7.0% y 10.5%
 - Enfermedad cardiovascular aterosclerótica establecida
 - IMC ≥25 kg/m²
-""")
+                """)
 
-            # Mapa de sitios de estudio
-            st.markdown("##### Distribución de sitios de estudio:")
-            trial_sites = pd.DataFrame({
-                'lat': [random.uniform(25, 60) for _ in range(15)],
-                'lon': [random.uniform(-120, 30) for _ in range(15)],
-                'sitio': [f'Centro {random.randint(1, 100)}' for _ in range(15)],
-                'pacientes_reclutados': [random.randint(10, 100) for _ in range(15)]
-            })
+                # Mapa de sitios de estudio
+                st.markdown("##### Distribución de sitios de estudio:")
+                trial_sites = pd.DataFrame({
+                    'lat': [random.uniform(25, 60) for _ in range(15)],
+                    'lon': [random.uniform(-120, 30) for _ in range(15)],
+                    'sitio': [f'Centro {random.randint(1, 100)}' for _ in range(15)],
+                    'pacientes_reclutados': [random.randint(10, 100) for _ in range(15)]
+                })
+                st.map(trial_sites)
 
-            st.map(trial_sites)
+        # Línea de tiempo del ensayo
+        st.markdown("##### Línea de tiempo del ensayo:")
+        timeline_chart = alt.Chart(pd.DataFrame({
+            'Fase': ['Diseño', 'Inicio', 'Reclutamiento', 'Tratamiento', 'Análisis', 'Resultados'],
+            'Inicio': [0, 3, 6, 8, 24, 30],
+            'Fin':    [3, 6, 18, 24, 30, 36],
+            'Estado': ['Completado', 'Completado', 'En progreso', 'Planificado', 'Planificado', 'Planificado']
+        })).mark_bar().encode(
+            x='Inicio',
+            x2='Fin',
+            y='Fase',
+            color=alt.Color('Estado', scale=alt.Scale(
+                domain=['Completado','En progreso','Planificado'],
+                range=['#2ecc71','#3498db','#95a5a6']
+            ))
+        ).properties(height=200)
+        st.altair_chart(timeline_chart, use_container_width=True)
 
-# Línea de tiempo del ensayo
-st.markdown("##### Línea de tiempo del ensayo:")
-
-timeline_chart = alt.Chart(
-    pd.DataFrame({
-        'Fase': ['Diseño', 'Inicio', 'Reclutamiento', 'Tratamiento', 'Análisis', 'Resultados'],
-        'Inicio': [0, 3, 6, 8, 24, 30],
-        'Fin': [3, 6, 18, 24, 30, 36],
-        'Estado': ['Completado', 'Completado', 'En progreso', 'Planificado', 'Planificado', 'Planificado']
-    })
-).mark_bar().encode(
-    x='Inicio',
-    x2='Fin',
-    y='Fase',
-    color=alt.Color(
-        'Estado',
-        scale=alt.Scale(
-            domain=['Completado', 'En progreso', 'Planificado'],
-            range=['#2ecc71', '#3498db', '#95a5a6']
-        )
-    )
-).properties(height=200)
-
-st.altair_chart(timeline_chart, use_container_width=True)
-
-# Resultados preliminares cuando estén disponibles
-if i <= 2:
-    st.markdown("##### Resultados preliminares disponibles:")
-
-    results_data = pd.DataFrame({
-        'Grupo': ['Semaglutide', 'Placebo'],
-        'Reducción HbA1c (%)': [1.4 + random.uniform(-0.2, 0.2), 0.3 + random.uniform(-0.1, 0.1)],
-        'Reducción peso (kg)': [4.5 + random.uniform(-0.5, 0.5), 0.8 + random.uniform(-0.2, 0.2)],
-        'Eventos CV (%)': [3.2 + random.uniform(-0.5, 0.5), 5.1 + random.uniform(-0.5, 0.5)]
-    })
-
-    st.dataframe(results_data, use_container_width=True)
-
-    # Comentario analítico
-    st.info("💡 **Análisis IA:** Los datos preliminares sugieren una eficacia significativa en reducción de HbA1c y peso comparado con placebo, con tendencia a reducción de eventos cardiovasculares que necesita confirmación al completar el estudio.")
+        # Resultados preliminares
+        st.markdown("##### Resultados preliminares disponibles:")
+        results_data = pd.DataFrame({
+            'Grupo': ['Semaglutide','Placebo'],
+            'Reducción HbA1c (%)': [1.4 + random.uniform(-0.2,0.2), 0.3 + random.uniform(-0.1,0.1)],
+            'Reducción peso (kg)': [4.5 + random.uniform(-0.5,0.5), 0.8 + random.uniform(-0.2,0.2)],
+            'Eventos CV (%)': [3.2 + random.uniform(-0.5,0.5), 5.1 + random.uniform(-0.5,0.5)]
+        })
+        st.dataframe(results_data, use_container_width=True)
+        st.info("💡 **Análisis IA:** Los datos preliminares sugieren eficacia significativa en HbA1c y peso comparado con placebo.")
 
 # 4. ANÁLISIS
 elif "📊 Análisis" in menu:
