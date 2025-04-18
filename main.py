@@ -1029,96 +1029,102 @@ elif "📊 Análisis" in menu:
             default=["GLP-1", "SGLT2"]
         )
         
-        # Botón para ejecutar análisis de tendencias
-        if st.button("Analizar tendencias", use_container_width=True):
-            # Simular datos de tendencias
-            años = list(range(2010, 2026))
-            
-            # Datos de publicaciones por año y tema
-            trend_data = pd.DataFrame({
-                'Año': años * len(temas_interes),
-                'Tema': [tema for tema in temas_interes for _ in años],
-                'Publicaciones': [
-                    int(100 * (1 + 0.2 * (año - 2010) + random.uniform(-0.05, 0.05))) if tema == "GLP-1" else
-                    int(50 * (1 + 0.4 * (año - 2015) + random.uniform(-0.05, 0.05))) if tema == "SGLT2" else
-                    int(30 * (1 + 0.5 * (año - 2010) + random.uniform(-0.05, 0.05)))
-                    for tema in temas_interes for año in años
-                ]
-            })
-            
-            # Filtrar por el periodo seleccionado
-            trend_data = trend_data[(trend_data['Año'] >= periodo[0]) & (trend_data['Año'] <= periodo[1])]
-            
-            # Gráfico de tendencias
-            st.subheader(f"Evolución de publicaciones en {area_investigacion} ({periodo[0]}-{periodo[1]})")
-            
-            trend_chart = alt.Chart(trend_data).mark_line(point=True).encode(
-                x=alt.X('Año:O', title='Año'),
-                y=alt.Y('Publicaciones:Q', title='Número de publicaciones'),
-                color=alt.Color('Tema:N', legend=alt.Legend(title="Tema")),
-                tooltip=['Año', 'Tema', 'Publicaciones']
-            ).properties(
-                height=400
-            ).interactive()
-            
-            st.altair_chart(trend_chart, use_container_width=True)
-            
-            # Análisis de citas e impacto
-            st.subheader("Análisis de impacto por tema")
-            
-# Simular datos de impacto
-impact_data = pd.DataFrame({
-    'Tema': temas_interes,
-    'Publicaciones': [
-        sum(trend_data[trend_data['Tema'] == tema]['Publicaciones']) 
-        for tema in temas_interes
-    ],
-    'Citas promedio': [
-        round(random.uniform(15, 35), 1) for _ in temas_interes
-    ],
-    'Factor impacto': [
-        round(random.uniform(3.5, 8.2), 2) for _ in temas_interes
-    ],
-    'Crecimiento anual (%)': [
-        round(random.uniform(8, 25), 1) for _ in temas_interes
+      temas_interes = ["GLP-1", "SGLT2", "Obesidad", "Diabetes tipo 2"]
+
+# Botón para ejecutar análisis de tendencias
+if st.button("Analizar tendencias", use_container_width=True):
+    
+    # Simular datos de tendencias
+    años = list(range(2010, 2026))
+
+    trend_data = pd.DataFrame({
+        'Año': años * len(temas_interes),
+        'Tema': [tema for tema in temas_interes for _ in años],
+        'Publicaciones': [
+            int(100 * (1 + 0.2 * (año - 2010) + random.uniform(-0.05, 0.05))) if tema == "GLP-1" else
+            int(50 * (1 + 0.4 * (año - 2015) + random.uniform(-0.05, 0.05))) if tema == "SGLT2" else
+            int(30 * (1 + 0.5 * (año - 2010) + random.uniform(-0.05, 0.05)))
+            for tema in temas_interes for año in años
+        ]
+    })
+
+    # Simular periodo de análisis (puedes usar input del usuario si lo tienes)
+    periodo = (2015, 2025)
+
+    # Filtrar por el periodo seleccionado
+    trend_data = trend_data[
+        (trend_data['Año'] >= periodo[0]) & (trend_data['Año'] <= periodo[1])
     ]
-})
 
-st.dataframe(impact_data, use_container_width=True)
+    # Gráfico de líneas de tendencias
+    st.subheader(f"Evolución de publicaciones en {', '.join(temas_interes)} ({periodo[0]}–{periodo[1]})")
 
-            
-            # Gráfico de burbujas para visualizar impacto
-            st.subheader("Mapa de impacto científico")
-            
-            # Datos para gráfico de burbujas
-            bubble_data = pd.DataFrame({
-                'Tema': temas_interes * 3,
-                'Año': [2015, 2015] + [2020, 2020] + [2025, 2025],
-                'Publicaciones': [
-                    int(random.uniform(100, 200)) for _ in range(len(temas_interes) * 3)
-                ],
-                'Citas': [
-                    int(random.uniform(500, 5000)) for _ in range(len(temas_interes) * 3)
-                ],
-                'Impacto': [
-                    round(random.uniform(2, 15), 1) for _ in range(len(temas_interes) * 3)
-                ]
-            })
-            
-            bubble_chart = alt.Chart(bubble_data).mark_circle().encode(
-                x=alt.X('Publicaciones:Q', title='Número de publicaciones'),
-                y=alt.Y('Citas:Q', title='Número de citas'),
-                size=alt.Size('Impacto:Q', scale=alt.Scale(range=[100, 1000]), legend=alt.Legend(title="Factor de impacto")),
-                color=alt.Color('Tema:N', legend=alt.Legend(title="Tema")),
-                tooltip=['Tema', 'Año', 'Publicaciones', 'Citas', 'Impacto']
-            ).properties(
-                height=500
-            ).interactive()
-            
-            st.altair_chart(bubble_chart, use_container_width=True)
-            
-            # Análisis de colaboraciones
-            st.subheader("Redes de colaboración global")
+    trend_chart = alt.Chart(trend_data).mark_line(point=True).encode(
+        x=alt.X('Año:O', title='Año'),
+        y=alt.Y('Publicaciones:Q', title='Número de publicaciones'),
+        color=alt.Color('Tema:N', legend=alt.Legend(title="Tema")),
+        tooltip=['Año', 'Tema', 'Publicaciones']
+    ).properties(
+        height=400
+    ).interactive()
+
+    st.altair_chart(trend_chart, use_container_width=True)
+
+    # Análisis de impacto por tema
+    st.subheader("Análisis de impacto por tema")
+
+    impact_data = pd.DataFrame({
+        'Tema': temas_interes,
+        'Publicaciones': [
+            sum(trend_data[trend_data['Tema'] == tema]['Publicaciones']) 
+            for tema in temas_interes
+        ],
+        'Citas promedio': [
+            round(random.uniform(15, 35), 1) for _ in temas_interes
+        ],
+        'Factor impacto': [
+            round(random.uniform(3.5, 8.2), 2) for _ in temas_interes
+        ],
+        'Crecimiento anual (%)': [
+            round(random.uniform(8, 25), 1) for _ in temas_interes
+        ]
+    })
+
+    st.dataframe(impact_data, use_container_width=True)
+
+    # Gráfico de burbujas para visualizar impacto
+    st.subheader("Mapa de impacto científico")
+
+    bubble_data = pd.DataFrame({
+        'Tema': temas_interes * 3,
+        'Año': [2015, 2020, 2025] * len(temas_interes),
+        'Publicaciones': [
+            int(random.uniform(100, 200)) for _ in range(len(temas_interes) * 3)
+        ],
+        'Citas': [
+            int(random.uniform(500, 5000)) for _ in range(len(temas_interes) * 3)
+        ],
+        'Impacto': [
+            round(random.uniform(2, 15), 1) for _ in range(len(temas_interes) * 3)
+        ]
+    })
+
+    bubble_chart = alt.Chart(bubble_data).mark_circle().encode(
+        x=alt.X('Publicaciones:Q', title='Número de publicaciones'),
+        y=alt.Y('Citas:Q', title='Número de citas'),
+        size=alt.Size('Impacto:Q', scale=alt.Scale(range=[100, 1000]), legend=alt.Legend(title="Factor de impacto")),
+        color=alt.Color('Tema:N', legend=alt.Legend(title="Tema")),
+        tooltip=['Tema', 'Año', 'Publicaciones', 'Citas', 'Impacto']
+    ).properties(
+        height=500
+    ).interactive()
+
+    st.altair_chart(bubble_chart, use_container_width=True)
+
+    # Placeholder para futuras funciones de red de colaboración
+    st.subheader("Redes de colaboración global")
+    st.info("Funcionalidad en desarrollo. Pronto podrás ver mapas de coautoría y colaboración internacional.")
+
             
             # Simular datos de colaboración internacional
             countries = ['Estados Unidos', 'China', 'Reino Unido', 'Alemania', 'Japón', 'Francia', 'Canadá', 'Australia']
