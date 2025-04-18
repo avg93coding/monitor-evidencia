@@ -497,8 +497,8 @@ elif "📊 Análisis" in menu:
     # Introducción a la sección
     st.markdown("""
     <div style='background-color:#f0f7ff; padding:15px; border-radius:5px; margin-bottom:20px;'>
-    <h4 style='margin-top:0'>Herramientas de análisis impulsadas por IA</h4>
-    <p>Extraiga insights significativos de la literatura científica mediante análisis estadísticos y visualizaciones avanzadas.</p>
+        <h4 style='margin-top:0'>Herramientas de análisis impulsadas por IA</h4>
+        <p>Extraiga insights significativos de la literatura científica mediante análisis estadísticos y visualizaciones avanzadas.</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -509,18 +509,16 @@ elif "📊 Análisis" in menu:
         horizontal=True
     )
 
-    # Demostración de herramienta de análisis comparativo
+    # --- Análisis Comparativo ---
     if tipo_analisis == "Comparativo":
         st.subheader("Análisis Comparativo de Tratamientos")
 
         col1, col2 = st.columns(2)
-
         with col1:
             tratamiento1 = st.selectbox(
                 "Tratamiento 1",
                 ["Semaglutide", "Liraglutide", "Tirzepatide", "Empagliflozin", "Canagliflozin"]
             )
-
         with col2:
             tratamiento2 = st.selectbox(
                 "Tratamiento 2",
@@ -528,617 +526,140 @@ elif "📊 Análisis" in menu:
                 index=1
             )
 
-        endpoint = st.multiselect(
+        endpoints = st.multiselect(
             "Endpoints a comparar",
             ["Reducción HbA1c", "Pérdida de peso", "Eventos cardiovasculares", "Eventos adversos", "Abandonos"],
             default=["Reducción HbA1c", "Pérdida de peso"]
         )
 
-        # Botón para ejecutar análisis
         if st.button("Ejecutar análisis comparativo", use_container_width=True):
             st.success(f"Analizando diferencias entre {tratamiento1} y {tratamiento2} usando 17 estudios")
 
             # Forest plot simulado
             st.subheader("Forest Plot - Diferencia media en reducción de HbA1c")
-
-            # Datos simulados para forest plot
             forest_data = pd.DataFrame({
                 'Estudio': [f"Estudio {chr(65 + i)}" for i in range(8)],
-                'Año': [random.randint(2020, 2025) for _ in range(8)],
-                'DiferenciaMean': [-0.3, -0.5, -0.2, -0.4, -0.6, -0.3, -0.5, -0.4],
+                'MeanDiff': [-0.3, -0.5, -0.2, -0.4, -0.6, -0.3, -0.5, -0.4],
                 'LowerCI': [-0.5, -0.7, -0.4, -0.6, -0.8, -0.5, -0.7, -0.6],
-                'UpperCI': [-0.1, -0.3, -0.1, -0.2, -0.4, -0.1, -0.3, -0.2],
-                'Weight': [12, 15, 10, 18, 14, 11, 9, 11]
+                'UpperCI': [-0.1, -0.3, -0.1, -0.2, -0.4, -0.1, -0.3, -0.2]
             })
+            base = alt.Chart(forest_data).encode(y=alt.Y('Estudio:N', sort=None))
+            lines = base.mark_rule().encode(
+                x=alt.X('LowerCI:Q', title='Diferencia en HbA1c (%)'),
+                x2='UpperCI:Q'
+            )
+            points = base.mark_circle(size=100).encode(
+                x='MeanDiff:Q',
+                tooltip=['Estudio','MeanDiff','LowerCI','UpperCI']
+            )
+            st.altair_chart((lines + points).properties(height=300), use_container_width=True)
 
-# Crear forest plot con Altair
-base = alt.Chart(forest_data).encode(
-    y=alt.Y('Estudio:N', sort=None)
-)
+            # Gráfico de comparación de barras
+            st.subheader("Comparación de endpoints")
+            comp_df = pd.DataFrame({
+                'Endpoint': ['HbA1c (%)', 'Peso (kg)', 'PAS (mmHg)', 'Eventos CV (%)'],
+                tratamiento1: [1.6, 5.2, 3.8, 3.2],
+                tratamiento2: [1.2, 3.6, 2.9, 3.5],
+            }).melt('Endpoint', var_name='Tratamiento', value_name='Valor')
+            bar = alt.Chart(comp_df).mark_bar().encode(
+                x='Tratamiento:N',
+                y='Valor:Q',
+                color='Tratamiento:N',
+                column='Endpoint:N',
+                tooltip=['Valor']
+            ).properties(width=150)
+            st.altair_chart(bar, use_container_width=True)
 
-lines = base.mark_rule().encode(
-    x=alt.X('LowerCI:Q', title='Diferencia en HbA1c (%)'),
-    x2='UpperCI:Q'
-)
+    # --- Meta-análisis ---
+    elif tipo_analisis == "Meta-análisis":
+        st.subheader("Generador de Meta-análisis")
 
-points = base.mark_circle(size=100).encode(
-    x='DiferenciaMean:Q',
-    color=alt.value('black'),
-    tooltip=['Estudio', 'Año', 'DiferenciaMean', 'LowerCI', 'UpperCI', 'Weight']
-)
-
-forest_chart = (lines + points).properties(height=300)
-st.altair_chart(forest_chart, use_container_width=True)
-
-# Gráfico de comparación de barras
-st.subheader("Comparación de endpoints")
-
-comparison_data = pd.DataFrame({
-    'Endpoint': ['Reducción HbA1c (%)', 'Pérdida de peso (kg)', 'Reducción PAS (mmHg)', 'Eventos CV (%)'],
-    tratamiento1: [1.6, 5.2, 3.8, 3.2],
-    tratamiento2: [1.2, 3.6, 2.9, 3.5],
-}).melt('Endpoint', var_name='Tratamiento', value_name='Valor')
-
-bar_chart = alt.Chart(comparison_data).mark_bar().encode(
-    x=alt.X('Tratamiento:N'),
-    y=alt.Y('Valor:Q'),
-    color=alt.Color('Tratamiento:N', legend=None),
-    column=alt.Column('Endpoint:N'),
-    tooltip=['Tratamiento', 'Valor']
-).properties(width=150)
-
-st.altair_chart(bar_chart, use_container_width=True)
-
-# Tabla de NNT y NNH
-st.subheader("Números Necesarios a Tratar (NNT) y para Dañar (NNH)")
-
-nnt_data = pd.DataFrame({
-    'Resultado': [
-        'Reducción HbA1c >1%',
-        'Pérdida >5% peso corporal',
-        'Prevención evento CV',
-        'Náusea',
-        'Vómito',
-        'Discontinuación por EA'
-    ],
-    'NNT/NNH': [4, 6, 32, -12, -18, -42],
-    'IC 95%': ['3-5', '5-8', '22-68', '-9 a -16', '-14 a -25', '-30 a -86'],
-    'Tipo': ['Beneficio', 'Beneficio', 'Beneficio', 'Daño', 'Daño', 'Daño']
-})
-
-def highlight_rows(row):
-    if row['Tipo'] == 'Beneficio':
-        return ['background-color: #d4edda'] * len(row)
-    else:
-        return ['background-color: #f8d7da'] * len(row)
-
-st.dataframe(
-    nnt_data.style.apply(highlight_rows, axis=1),
-    use_container_width=True
-)
-
-# Análisis de calidad de la evidencia
-st.subheader("Evaluación de calidad de la evidencia")
-
-grade_data = pd.DataFrame({
-    'Dominio': [
-        'Riesgo de sesgo',
-        'Inconsistencia',
-        'Evidencia indirecta',
-        'Imprecisión',
-        'Sesgo de publicación',
-        'Calidad global'
-    ],
-    'Evaluación': [
-        'Bajo',
-        'Moderado',
-        'Bajo',
-        'Bajo',
-        'No detectado',
-        'Alta'
-    ],
-    'Explicación': [
-        'La mayoría de estudios fueron doble ciego con bajo riesgo de sesgo',
-        'Heterogeneidad moderada (I²=42%)',
-        'Comparaciones directas disponibles',
-        'Intervalos de confianza estrechos',
-        'Análisis de funnel plot sin asimetrías significativas',
-        'Evidencia de alta calidad para la comparación entre tratamientos'
-    ]
-})
-
-st.table(grade_data)
-
-# Comentario analítico
-st.info("""
-💡 **Conclusión del análisis IA:**
-
-La evidencia disponible indica que Semaglutide proporciona reducciones estadísticamente superiores en HbA1c y peso corporal comparado con Liraglutide. Las diferencias en beneficios cardiovasculares no son estadísticamente significativas. El perfil de eventos adversos es similar entre ambos tratamientos, con mayor probabilidad de síntomas gastrointestinales en el grupo de Semaglutide, pero con tasas de discontinuación comparables.
-
-Se recomienda considerar Semaglutide como opción preferente cuando el objetivo principal sea la reducción de peso o el control glucémico intensivo, mientras que ambas opciones muestran beneficios cardiovasculares comparables.
-""")
-
-# Demostración de meta-análisis
-elif tipo_analisis == "Meta-análisis":
-    st.subheader("Generador de Meta-análisis")
-
-    st.markdown("""
-    Esta herramienta permite realizar meta-análisis instantáneos a partir de la literatura científica actualizada.
-    Seleccione los parámetros para su análisis:
-    """)
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        intervencion = st.selectbox("Intervención", ["GLP-1 RA", "SGLT2i", "DPP-4i", "Insulina", "Metformina"])
-        poblacion = st.selectbox("Población", ["DMT2", "Obesidad", "Insuficiencia cardíaca", "Enfermedad renal crónica"])
-
-    with col2:
-        desenlace = st.selectbox("Desenlace principal", ["Mortalidad CV", "HbA1c", "Peso corporal", "Eventos renales", "MACE"])
-        modelo = st.radio("Modelo estadístico", ["Efectos aleatorios", "Efectos fijos"], horizontal=True)
-
-    # Opciones avanzadas
-    with st.expander("Opciones avanzadas"):
-        col1, col2, col3 = st.columns(3)
-
+        col1, col2 = st.columns(2)
         with col1:
-            heterogeneidad = st.checkbox("Análisis de heterogeneidad", value=True)
-            metaregresion = st.checkbox("Meta-regresión", value=False)
-
+            intervencion = st.selectbox(
+                "Intervención",
+                ["GLP-1 RA", "SGLT2i", "DPP-4i", "Insulina", "Metformina"]
+            )
+            poblacion = st.selectbox(
+                "Población",
+                ["DMT2", "Obesidad", "Insuficiencia cardíaca", "Enfermedad renal crónica"]
+            )
         with col2:
-            sesgo_publicacion = st.checkbox("Evaluación de sesgo de publicación", value=True)
-            analisis_sensibilidad = st.checkbox("Análisis de sensibilidad", value=True)
-
-        with col3:
-            subgrupos = st.multiselect(
-                "Análisis de subgrupos",
-                ["Edad", "Sexo", "Duración diabetes", "Comorbilidades", "HbA1c basal"],
-                default=["Edad", "HbA1c basal"]
+            desenlace = st.selectbox(
+                "Desenlace principal",
+                ["Mortalidad CV", "HbA1c", "Peso corporal", "Eventos renales", "MACE"]
+            )
+            modelo = st.radio(
+                "Modelo estadístico",
+                ["Efectos aleatorios", "Efectos fijos"],
+                horizontal=True
             )
 
-    # Botón para ejecutar meta-análisis
-    if st.button("Ejecutar meta-análisis", use_container_width=True):
-        with st.spinner("Analizando estudios..."):
-            time.sleep(2)
-
-        st.success("Meta-análisis completado | 23 estudios incluidos | 58,721 participantes")
-
-        # Resultados del meta-análisis
-        col1, col2 = st.columns([2, 1])
-
-        with col1:
-            st.subheader("Forest Plot - Efectos sobre Mortalidad CV")
+        if st.button("Ejecutar meta-análisis", use_container_width=True):
+            st.success("Meta-análisis completado – 23 estudios incluidos")
             st.image("https://via.placeholder.com/700x400?text=Forest+Plot", use_column_width=True)
 
+    # --- Tendencias temporales ---
+    elif tipo_analisis == "Tendencias temporales":
+        st.subheader("Análisis de Tendencias Temporales")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            area_inv = st.selectbox(
+                "Área de investigación",
+                ["Diabetes", "Oncología", "Cardiología", "Neurología", "Inmunología"]
+            )
         with col2:
-            st.subheader("Resultados principales")
-            st.markdown("""
-            **Efecto global:**
-            - RR: 0.82 (IC 95%: 0.74-0.91)
-            - p < 0.001
+            periodo = st.slider("Periodo", 2000, 2025, (2010, 2025))
 
-            **Heterogeneidad:**
-            - I² = 37%
-            - Q = 34.8 (p = 0.07)
-
-            **NNT:** 42 (IC 95%: 32-67)
-            """)
-
-        # Funnel plot
-        st.subheader("Funnel Plot - Evaluación de sesgo de publicación")
-
-        funnel_data = pd.DataFrame({
-            'LogRR': [-0.3 + random.uniform(-0.2, 0.2) for _ in range(23)],
-            'SE': [random.uniform(0.05, 0.5) for _ in range(23)],
-            'Estudio': [f"Estudio {i + 1}" for i in range(23)]
-        })
-
-        funnel_chart = alt.Chart(funnel_data).mark_circle(size=80).encode(
-            x=alt.X('LogRR:Q', title='Log Risk Ratio', scale=alt.Scale(domain=[-1, 0.4])),
-            y=alt.Y('SE:Q', title='Standard Error', scale=alt.Scale(domain=[0.5, 0], reverse=True)),
-            tooltip=['Estudio', 'LogRR', 'SE']
-        ).properties(width=700, height=400)
-
-        vline = alt.Chart(pd.DataFrame({'x': [-0.198]})).mark_rule(color='red').encode(x='x')
-
-        st.altair_chart(vline + funnel_chart, use_container_width=True)
-
-        # Análisis de subgrupos
-        st.subheader("Análisis de subgrupos")
-
-        subgroup_data = pd.DataFrame({
-            'Subgrupo': ['Global', '≤65 años', '>65 años', 'HbA1c ≤8%', 'HbA1c >8%', 'Con ECV', 'Sin ECV'],
-            'RR': [0.82, 0.84, 0.76, 0.88, 0.75, 0.72, 0.91],
-            'Lower': [0.74, 0.75, 0.65, 0.78, 0.67, 0.63, 0.82],
-            'Upper': [0.91, 0.95, 0.89, 0.99, 0.84, 0.83, 1.02],
-            'p_interaction': ['', '0.21', '', '0.03', '', '0.001', ''],
-            'Significativo': [True, True, True, True, True, True, False]
-        })
-
-        st.dataframe(subgroup_data, use_container_width=True)
-        
-# Crear gráfico de subgrupos con Altair
-base = alt.Chart(subgroup_data).encode(
-    y=alt.Y('Subgrupo:N', sort=None)
-)
-
-lines = base.mark_rule().encode(
-    x=alt.X('Lower:Q', title='Risk Ratio (IC 95%)'),
-    x2='Upper:Q',
-    color=alt.Color(
-        'Significativo:N',
-        scale=alt.Scale(
-            domain=[True, False],
-            range=['#1E88E5', '#ccc']
-        ),
-        legend=None
-    )
-)
-
-points = base.mark_circle(size=100).encode(
-    x='RR:Q',
-    color=alt.value('black'),
-    tooltip=['Subgrupo', 'RR', 'Lower', 'Upper', 'p_interaction']
-)
-
-vline = alt.Chart(pd.DataFrame({'x': [1]})).mark_rule(
-    color='red',
-    strokeDash=[5, 5]
-).encode(x='x')
-
-subgroup_chart = (vline + lines + points).properties(height=300)
-st.altair_chart(subgroup_chart, use_container_width=True)
-
-st.markdown("**Valores p para interacción entre subgrupos:**")
-interaction_data = pd.DataFrame({
-    'Subgrupo': ['Edad (≤65 vs >65)', 'HbA1c basal (≤8% vs >8%)', 'ECV basal (sí vs no)'],
-    'Valor p': ['0.21', '0.03', '0.001'],
-    'Significancia': ['No significativo', 'Significativo', 'Altamente significativo']
-})
-st.table(interaction_data)
-
-st.info("""
-💡 **Conclusiones del meta-análisis:**
-
-Este meta-análisis de 23 estudios con 58,721 participantes demuestra que los GLP-1 RA reducen significativamente la mortalidad cardiovascular en pacientes con DMT2 (RR 0.82, IC 95% 0.74-0.91, p<0.001).
-
-El análisis de subgrupos revela:
-1. Mayor beneficio en pacientes con HbA1c >8% vs ≤8% (p-interacción=0.03)
-2. Efecto más pronunciado en pacientes con enfermedad cardiovascular establecida (p-interacción=0.001)
-3. Tendencia a mayor beneficio en >65 años sin alcanzar significancia estadística
-
-La evaluación de sesgo de publicación no mostró asimetría significativa en el funnel plot, sugiriendo ausencia de sesgo de publicación importante. La heterogeneidad entre estudios fue moderada (I²=37%).
-
-**Implicaciones clínicas:** Los GLP-1 RA deberían considerarse preferentemente en pacientes con DMT2 y enfermedad cardiovascular establecida, especialmente aquellos con control glucémico subóptimo.
-""")
-
-elif tipo_analisis == "Tendencias temporales":
-    st.subheader("Análisis de Tendencias Temporales en Investigación")
-    st.markdown("""
-    Explore cómo evolucionan las tendencias de investigación científica a lo largo del tiempo.
-    """)
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        area_investigacion = st.selectbox(
-            "Área de investigación",
-            ["Diabetes", "Oncología", "Cardiología", "Neurología", "Inmunología"]
+        temas = st.multiselect(
+            "Temas",
+            ["GLP-1", "SGLT2", "Inmunoterapia", "Inteligencia Artificial", "Terapia génica", "Medicina de precisión"],
+            default=["GLP-1", "SGLT2"]
         )
 
-    with col2:
-        periodo = st.slider(
-            "Periodo de análisis",
-            min_value=2000,
-            max_value=2025,
-            value=(2010, 2025)
-        )
-
-    temas_interes = st.multiselect("Temas de interés",
-                                   ["GLP-1",
-                                    "SGLT2",
-                                    "Inmunoterapia",
-                                    "Inteligencia Artificial",
-                                    "Terapia génica",
-                                    "Medicina de precisión"],
-                                   default=["GLP-1",
-                                            "SGLT2"])
-
-    temas_interes = ["GLP-1", "SGLT2", "Obesidad", "Diabetes tipo 2"]
-
-    if st.button("Analizar tendencias", use_container_width=True):
-
-        años = list(range(2010, 2026))
-
-        trend_data = pd.DataFrame({
-            'Año': años * len(temas_interes),
-            'Tema': [tema for tema in temas_interes for _ in años],
-            'Publicaciones': [
-                int(100 * (1 + 0.2 * (año - 2010) + random.uniform(-0.05, 0.05))) if tema == "GLP-1" else
-                int(50 * (1 + 0.4 * (año - 2015) + random.uniform(-0.05, 0.05))) if tema == "SGLT2" else
-                int(30 * (1 + 0.5 * (año - 2010) + random.uniform(-0.05, 0.05)))
-                for tema in temas_interes for año in años
-            ]
-        })
-
-        periodo = (2015, 2025)
-
-        trend_data = trend_data[
-            (trend_data['Año'] >= periodo[0]) & (trend_data['Año'] <= periodo[1])
-        ]
-
-        st.subheader(
-            f"Evolución de publicaciones en {', '.join(temas_interes)} ({periodo[0]}–{periodo[1]})")
-
-        trend_chart = alt.Chart(trend_data).mark_line(point=True).encode(
-            x=alt.X('Año:O', title='Año'),
-            y=alt.Y('Publicaciones:Q', title='Número de publicaciones'),
-            color=alt.Color('Tema:N', legend=alt.Legend(title="Tema")),
-            tooltip=['Año', 'Tema', 'Publicaciones']
-        ).properties(
-            height=400
-        ).interactive()
-
-        st.altair_chart(trend_chart, use_container_width=True)
-
-        st.subheader("Análisis de impacto por tema")
-
-        impact_data = pd.DataFrame({
-            'Tema': temas_interes,
-            'Publicaciones': [
-                sum(trend_data[trend_data['Tema'] == tema]['Publicaciones'])
-                for tema in temas_interes
-            ],
-            'Citas promedio': [
-                round(random.uniform(15, 35), 1) for _ in temas_interes
-            ],
-            'Factor impacto': [
-                round(random.uniform(3.5, 8.2), 2) for _ in temas_interes
-            ],
-            'Crecimiento anual (%)': [
-                round(random.uniform(8, 25), 1) for _ in temas_interes
-            ]
-        })
-
-        st.dataframe(impact_data, use_container_width=True)
-
-# Gráfico de burbujas para visualizar impacto
-st.subheader("Mapa de impacto científico")
-
-bubble_data = pd.DataFrame({
-    'Tema': temas_interes * 3,
-    'Año': [2015, 2020, 2025] * len(temas_interes),
-    'Publicaciones': [
-        int(random.uniform(100, 200)) for _ in range(len(temas_interes) * 3)
-    ],
-    'Citas': [
-        int(random.uniform(500, 5000)) for _ in range(len(temas_interes) * 3)
-    ],
-    'Impacto': [
-        round(random.uniform(2, 15), 1) for _ in range(len(temas_interes) * 3)
-    ]
-})
-
-bubble_chart = alt.Chart(bubble_data).mark_circle().encode(
-    x=alt.X('Publicaciones:Q', title='Número de publicaciones'),
-    y=alt.Y('Citas:Q', title='Número de citas'),
-    size=alt.Size('Impacto:Q', scale=alt.Scale(range=[100, 1000]), legend=alt.Legend(title="Factor de impacto")),
-    color=alt.Color('Tema:N', legend=alt.Legend(title="Tema")),
-    tooltip=['Tema', 'Año', 'Publicaciones', 'Citas', 'Impacto']
-).properties(
-    height=500
-).interactive()
-
-st.altair_chart(bubble_chart, use_container_width=True)
-
-# Placeholder para futuras funciones de red de colaboración
-st.subheader("Redes de colaboración global")
-st.info("Funcionalidad en desarrollo. Pronto podrás ver mapas de coautoría y colaboración internacional.")
-
-# Simular datos de colaboración internacional
-countries = ['Estados Unidos', 'China', 'Reino Unido', 'Alemania', 'Japón', 'Francia', 'Canadá', 'Australia']
-connections = []
-
-for i in range(len(countries)):
-    for j in range(i + 1, len(countries)):
-        if random.random() > 0.3:
-            strength = random.randint(5, 30)
-            connections.append({
-                'source': countries[i],
-                'target': countries[j],
-                'strength': strength
+        if st.button("Analizar tendencias", use_container_width=True):
+            years = list(range(periodo[0], periodo[1] + 1))
+            df = pd.DataFrame({
+                'Año': years * len(temas),
+                'Tema': sum([[t]*len(years) for t in temas], []),
+                'Publicaciones': [random.randint(50, 200) for _ in range(len(years) * len(temas))]
             })
+            trend = alt.Chart(df).mark_line(point=True).encode(
+                x='Año:O',
+                y='Publicaciones:Q',
+                color='Tema:N',
+                tooltip=['Año','Publicaciones']
+            ).properties(height=300)
+            st.altair_chart(trend, use_container_width=True)
 
-st.markdown("""
-En una implementación completa, aquí se mostraría un gráfico interactivo de redes de colaboración
-entre instituciones y países en el campo seleccionado.
-""")
+    # --- Network Analysis ---
+    elif tipo_analisis == "Network Analysis":
+        st.subheader("Network Analysis de Evidencia Científica")
 
-collab_data = pd.DataFrame(connections)
-
-st.dataframe(collab_data, use_container_width=True)
-
-# Análisis de tendencias emergentes
-st.subheader("Temas emergentes identificados")
-
-emerging_topics = [
-    {"tema": "Receptores GLP-1 de administración oral", "crecimiento": "+127%", "año_emergencia": 2023},
-    {"tema": "Combinaciones GLP-1/GIP", "crecimiento": "+95%", "año_emergencia": 2022},
-    {"tema": "Terapias con células madre para diabetes", "crecimiento": "+62%", "año_emergencia": 2024},
-    {"tema": "Inteligencia artificial en endocrinología", "crecimiento": "+218%", "año_emergencia": 2021}
-]
-
-for i, topic in enumerate(emerging_topics):
-    st.markdown(f"""
-    <div style="background-color:#f0f7ff; padding:15px; border-radius:5px; margin-bottom:10px;">
-    <h5 style="margin-top:0">{topic['tema']}</h5>
-    <p><strong>Crecimiento anual:</strong> {topic['crecimiento']} |
-    <strong>Año de emergencia:</strong> {topic['año_emergencia']}</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.info("""
-💡 **Análisis de tendencias IA:**
-
-En el campo de la diabetes, se observa un crecimiento constante en investigación de agonistas del receptor GLP-1, con un aumento exponencial a partir de 2018, coincidiendo con la publicación de resultados cardiovasculares favorables.
-
-Los inhibidores SGLT2 muestran una tendencia de crecimiento aún más pronunciada desde 2015, probablemente impulsada por sus beneficios cardiovasculares y renales descubiertos en ensayos pivotales.
-
-El análisis de co-citación sugiere una creciente convergencia entre investigación en diabetes, obesidad y cardiología, reflejando un enfoque más integral en el manejo cardiometabólico.
-
-Las colaboraciones internacionales han aumentado un 42% en el período analizado, con una red especialmente fuerte entre instituciones de EE.UU., Reino Unido y Alemania.
-
-Los temas emergentes con mayor potencial disruptivo incluyen los agonistas duales/triples GLP-1/GIP, nuevas formulaciones orales y aplicaciones de inteligencia artificial en medicina de precisión para diabetes.
-""")
-
-# Demostración de análisis de redes
-elif tipo_analisis == "Network Analysis":
-    st.subheader("Network Analysis de Evidencia Científica")
-
-    st.markdown("""
-    Esta herramienta permite visualizar las interrelaciones entre publicaciones, autores, instituciones y conceptos científicos.
-    """)
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        concepto_central = st.selectbox(
-            "Concepto central",
-            ["Diabetes tipo 2", "Alzheimer", "Cáncer de páncreas", "Obesidad", "COVID-19"]
+        col1, col2 = st.columns(2)
+        with col1:
+            concepto = st.selectbox(
+                "Concepto central",
+                ["Diabetes tipo 2", "Alzheimer", "Cáncer de páncreas", "Obesidad", "COVID-19"]
+            )
+        with col2:
+            profundidad = st.slider("Profundidad de red", 1, 4, 2)
+        tipo_red = st.radio(
+            "Tipo de red",
+            ["Conceptos relacionados", "Co-citación de autores", "Colaboración institucional"],
+            horizontal=True
         )
 
-    with col2:
-        profundidad_red = st.slider(
-            "Profundidad de análisis",
-            min_value=1,
-            max_value=4,
-            value=2,
-            help="Nivel de expansión de la red desde el concepto central"
-        )
+        if st.button("Generar red", use_container_width=True):
+            st.success(f"Red generada para {concepto}")
+            st.image("https://via.placeholder.com/800x500?text=Network+Analysis", use_column_width=True)
+            m1, m2, m3, m4 = st.columns(4)
+            m1.metric("Nodos", "284")
+            m2.metric("Conexiones", "1,240")
+            m3.metric("Centralidad", "3.2")
+            m4.metric("Densidad", "0.042")
 
-    tipo_red = st.radio("Tipo de red a analizar",
-                        ["Conceptos relacionados",
-                         "Co-citación de autores",
-                         "Colaboración institucional"],
-                        horizontal=True)
-
-    if st.button("Generar análisis de red", use_container_width=True):
-        st.success(f"Analizando red de {tipo_red} para {concepto_central}")
-
-
-# Simular visualización de red
-st.image(
-    "https://via.placeholder.com/800x500?text=Network+Analysis+Visualization",
-    use_column_width=True
-)
-
-# Métricas de red
-st.subheader("Métricas de la red")
-
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    st.metric("Nodos", "284")
-with col2:
-    st.metric("Conexiones", "1,240")
-with col3:
-    st.metric("Centralidad promedio", "3.2")
-with col4:
-    st.metric("Densidad", "0.042")
-
-# Nodos principales
-st.subheader("Nodos principales por centralidad")
-
-top_nodes = pd.DataFrame({
-    'Nodo': [
-        "Resistencia a insulina", "Obesidad", "Disfunción mitocondrial",
-        "Inflamación crónica", "Microbioma intestinal", "Estrés oxidativo"
-    ] if tipo_red == "Conceptos relacionados" else [
-        "Smith, J.R.", "Wang, L.", "Johnson, M.K.",
-        "Zhang, X.", "Patel, A.", "González, R.M."
-    ] if tipo_red == "Co-citación de autores" else [
-        "Harvard Medical School", "Mayo Clinic", "Oxford University",
-        "Karolinska Institute", "NIH", "Seoul National University"
-    ],
-    'Centralidad': [0.82, 0.76, 0.71, 0.68, 0.65, 0.63],
-    'Conexiones': [58, 52, 47, 43, 41, 38]
-})
-
-st.dataframe(top_nodes, use_container_width=True)
-
-# Comunidades identificadas
-st.subheader("Comunidades identificadas en la red")
-
-communities = [
-    {"nombre": "Metabolismo energético", "nodos": 42, "densidad": 0.72},
-    {"nombre": "Señalización de insulina", "nodos": 37, "densidad": 0.68},
-    {"nombre": "Inflamación y citoquinas", "nodos": 31, "densidad": 0.57},
-    {"nombre": "Microbioma y barrera intestinal", "nodos": 28, "densidad": 0.64},
-    {"nombre": "Función mitocondrial", "nodos": 25, "densidad": 0.71}
-] if tipo_red == "Conceptos relacionados" else [
-    {"nombre": "Grupo Harvard-MIT", "nodos": 38, "densidad": 0.81},
-    {"nombre": "Consorcio Europeo de Diabetes", "nodos": 35, "densidad": 0.73},
-    {"nombre": "Red Asia-Pacífico", "nodos": 29, "densidad": 0.68},
-    {"nombre": "Grupo Escandinavo", "nodos": 24, "densidad": 0.79}
-]
-
-for i, comm in enumerate(communities):
-    st.markdown(
-        f"""
-        <div style="background-color:#f0f7ff; padding:10px; border-radius:5px; margin-bottom:10px;">
-        <h5 style="margin-top:0">{comm['nombre']}</h5>
-        <p><strong>Nodos:</strong> {comm['nodos']} | <strong>Densidad interna:</strong> {comm['densidad']}</p>
-        </div>
-        """, unsafe_allow_html=True
-    )
-
-# Evolución temporal de la red
-st.subheader("Evolución temporal de la red (2015–2025)")
-
-temporal_data = pd.DataFrame({
-    'Año': list(range(2015, 2026)),
-    'Nodos': [80, 95, 112, 134, 156, 185, 205, 224, 248, 265, 284],
-    'Conexiones': [120, 180, 267, 340, 445, 564, 684, 790, 912, 1084, 1240],
-    'Densidad': [0.038, 0.040, 0.043, 0.039, 0.037, 0.041, 0.042, 0.040, 0.039, 0.042, 0.042]
-})
-
-base = alt.Chart(temporal_data).encode(
-    x=alt.X('Año:O', title='Año')
-)
-
-line_nodos = base.mark_line(color='blue').encode(
-    y=alt.Y('Nodos:Q', title='Número de nodos', axis=alt.Axis(titleColor='blue'))
-)
-points_nodos = base.mark_circle(color='blue', size=60).encode(y='Nodos:Q')
-
-line_conexiones = base.mark_line(color='red').encode(
-    y=alt.Y('Conexiones:Q', title='Número de conexiones', axis=alt.Axis(titleColor='red'))
-)
-points_conexiones = base.mark_circle(color='red', size=60).encode(y='Conexiones:Q')
-
-temporal_chart = alt.layer(
-    line_nodos, points_nodos, line_conexiones, points_conexiones
-).resolve_scale(y='independent').properties(
-    height=400
-).interactive()
-
-st.altair_chart(temporal_chart, use_container_width=True)
-
-
-# Análisis y conclusiones
-st.info("""
-💡 **Análisis de redes IA:**
-
-El análisis de redes en torno a la Diabetes tipo 2 revela una estructura compleja con alta interconectividad entre diferentes dominios científicos.
-
-Los nodos con mayor centralidad (resistencia a insulina, obesidad y disfunción mitocondrial) actúan como puentes entre diferentes comunidades temáticas, sugiriendo su papel fundamental en la fisiopatología.
-
-La evolución temporal muestra un crecimiento exponencial de conexiones entre 2018-2022, posiblemente reflejando la integración acelerada de conocimientos entre campos tradicionalmente separados como metabolismo, inflamación y microbioma.
-
-Las cinco comunidades identificadas muestran alta cohesión interna pero también conexiones significativas entre ellas, evidenciando la naturaleza multifactorial de la enfermedad.
-
-El análisis sugiere áreas emergentes con potencial para nueva investigación en las intersecciones entre microbioma y señalización de insulina, así como entre inflamación y función mitocondrial, que presentan menos conexiones pero crecimiento reciente.
-""")
 
 # 5. CONFIGURACIÓN
 elif "⚙️ Configuración" in menu:
