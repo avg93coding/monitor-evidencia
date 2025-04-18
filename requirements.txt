@@ -14,3 +14,5 @@ torch
 sentencepiece
 beautifulsoup4
 requests
+streamlit-lottie>=0.0.5
+
