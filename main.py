@@ -88,6 +88,50 @@ else:
     </style>
     """, unsafe_allow_html=True)
 
+# ------------------------------
+# ESTILOS FUTURISTAS ADICIONALES
+st.markdown("""
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+  body, .stApp, .stText, .stMarkdown, .stButton>button {
+    font-family: 'Orbitron', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: 1px;
+  }
+  h1, h2, h3 {
+    color: #00e5ff;
+    font-weight: 700;
+  }
+  p, span, li {
+    color: #cfd8dc;
+  }
+  .main {
+    background-color: #10151a;
+  }
+  .stApp {
+    color: #eceff1;
+  }
+  .dashboard-card {
+    background-color: #1e272e;
+    box-shadow: 0 4px 12px rgba(0,255,255,0.2);
+  }
+  .stButton>button {
+    background-color: #00e5ff;
+    color: #10151a;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .stButton>button:hover {
+    background-color: #00b8d4;
+  }
+  footer {
+    visibility: hidden;
+  }
+</style>
+""", unsafe_allow_html=True)
+
+
 # ----- SIDEBAR -----
 # Mostrar logo si existe
 logo_path = "assets/logo.png"
