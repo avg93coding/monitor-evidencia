@@ -1066,28 +1066,26 @@ elif "📊 Análisis" in menu:
             # Análisis de citas e impacto
             st.subheader("Análisis de impacto por tema")
             
-            # Simular datos de impacto
-            impact_data = pd.DataFrame({
-                'Tema': temas_interes,
-                'Publicaciones': [
-                    sum(trend_data[trend_data['Tema']
-                'Tema': temas_interes,
-                'Publicaciones': [
-                    sum(trend_data[trend_data['Tema'] == tema]['Publicaciones']) 
-                    for tema in temas_interes
-                ],
-                'Citas promedio': [
-                    round(random.uniform(15, 35), 1) for _ in temas_interes
-                ],
-                'Factor impacto': [
-                    round(random.uniform(3.5, 8.2), 2) for _ in temas_interes
-                ],
-                'Crecimiento anual (%)': [
-                    round(random.uniform(8, 25), 1) for _ in temas_interes
-                ]
-            })
-            
-            st.dataframe(impact_data, use_container_width=True)
+# Simular datos de impacto
+impact_data = pd.DataFrame({
+    'Tema': temas_interes,
+    'Publicaciones': [
+        sum(trend_data[trend_data['Tema'] == tema]['Publicaciones']) 
+        for tema in temas_interes
+    ],
+    'Citas promedio': [
+        round(random.uniform(15, 35), 1) for _ in temas_interes
+    ],
+    'Factor impacto': [
+        round(random.uniform(3.5, 8.2), 2) for _ in temas_interes
+    ],
+    'Crecimiento anual (%)': [
+        round(random.uniform(8, 25), 1) for _ in temas_interes
+    ]
+})
+
+st.dataframe(impact_data, use_container_width=True)
+
             
             # Gráfico de burbujas para visualizar impacto
             st.subheader("Mapa de impacto científico")
